@@ -1,0 +1,555 @@
+import { products, categories, stores } from "./catalog.js";
+import { photoCredits } from "./photo-credits.js";
+import { storeLink } from "./store-links.js";
+import {
+  availableOffers,
+  bestOffer,
+  savingFor,
+  filterProducts,
+  basketSummary,
+} from "./pricing.js";
+
+const $ = (selector) => document.querySelector(selector);
+const productById = new Map(products.map((product) => [product.id, product]));
+const storeById = new Map(stores.map((store) => [store.id, store]));
+const storageKey = "qarenha-v1";
+const number = new Intl.NumberFormat("en-SA", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+const state = {
+  query: "",
+  category: "all",
+  storeIds: [],
+  maxPrice: null,
+  sort: "featured",
+  favoritesOnly: false,
+  favoriteIds: [],
+  basket: {},
+  visible: 12,
+  includeDelivery: true,
+};
+let selectedProduct = null;
+let toastTimer;
+
+function icon(name) {
+  return `<svg class="icon" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character],
+  );
+}
+
+function money(value) {
+  return `<span class="money"><b>${number.format(value)}</b><small>ر.س</small></span>`;
+}
+
+function readSavedList() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    if (Array.isArray(saved.favoriteIds)) {
+      state.favoriteIds = [
+        ...new Set(saved.favoriteIds.filter((id) => productById.has(id))),
+      ];
+    }
+    if (
+      saved.basket &&
+      typeof saved.basket === "object" &&
+      !Array.isArray(saved.basket)
+    ) {
+      for (const [id, quantity] of Object.entries(saved.basket)) {
+        if (
+          productById.has(id) &&
+          Number.isInteger(quantity) &&
+          quantity >= 1 &&
+          quantity <= 99
+        ) {
+          state.basket[id] = quantity;
+        }
+      }
+    }
+  } catch {
+    // Browsing and comparisons still work when browser storage is unavailable.
+  }
+}
+
+function saveList() {
+  try {
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify({ favoriteIds: state.favoriteIds, basket: state.basket }),
+    );
+  } catch {
+    toast("الحفظ غير متاح في هذا المتصفح. يمكنك مشاركة رابط قائمتك.");
+  }
+}
+
+function toast(message) {
+  clearTimeout(toastTimer);
+  $("#toast").textContent = message;
+  $("#toast").classList.add("visible");
+  toastTimer = setTimeout(() => $("#toast").classList.remove("visible"), 3200);
+}
+
+function updateCounts() {
+  const count = Object.values(state.basket).reduce(
+    (sum, quantity) => sum + quantity,
+    0,
+  );
+  $("#basket-count").textContent = count;
+  $("#basket-button").setAttribute("aria-label", `قائمة التسوق، ${count} قطعة`);
+  $("#favorites-count").textContent = state.favoriteIds.length;
+  $("#favorites-count").hidden = state.favoriteIds.length === 0;
+  $("#favorites-button").setAttribute(
+    "aria-pressed",
+    String(state.favoritesOnly),
+  );
+}
+
+function renderHero() {
+  const product = products[0];
+  $("#hero-feature").innerHTML = `
+    <img src="${product.image}" alt="${escapeHtml(product.name)}" width="400" height="300" fetchpriority="high">
+    <p class="hero-product-title">${escapeHtml(product.name)} <span>${escapeHtml(product.unit)}</span></p>
+    ${availableOffers(product)
+      .map((offer) => {
+        const store = storeById.get(offer.storeId);
+        return `<div class="hero-offer"><span><i class="store-dot" style="background:${store.color}"></i>${escapeHtml(store.name)}</span><strong>${number.format(offer.price)} <small>ر.س</small></strong></div>`;
+      })
+      .join("")}
+    <div class="hero-saving"><small>فرق السعر</small><strong>${number.format(savingFor(product))}</strong><small>ريال في نفس العبوة</small></div>`;
+}
+
+function renderCategories() {
+  const categoryIcons = {
+    groceries: "grocery",
+    vegetables: "vegetable",
+    fruits: "fruit",
+    drinks: "drink",
+  };
+  $("#category-grid").innerHTML = [
+    { id: "all", label: "كل المنتجات", icon: "grid" },
+    ...categories,
+  ]
+    .map(
+      (category) => `
+    <button class="category-card ${state.category === category.id ? "selected" : ""}" data-category="${category.id}" aria-pressed="${state.category === category.id}">
+      <span class="category-icon">${icon(categoryIcons[category.icon] || category.icon)}</span>
+      <span>${escapeHtml(category.label)}</span>
+      <small>${category.id === "all" ? products.length : products.filter((product) => product.category === category.id).length} منتج</small>
+    </button>`,
+    )
+    .join("");
+}
+
+function renderStores() {
+  $("#store-filters").innerHTML = stores
+    .map(
+      (store) => `
+    <label class="store-checkbox"><input type="checkbox" value="${store.id}" ${state.storeIds.includes(store.id) ? "checked" : ""}><span>${escapeHtml(store.name)}</span></label>`,
+    )
+    .join("");
+}
+
+function productCard(product) {
+  const offer = bestOffer(product, state.storeIds);
+  const count = availableOffers(product, state.storeIds).length;
+  const difference = savingFor(product, state.storeIds);
+  const favorite = state.favoriteIds.includes(product.id);
+  return `<article class="product-card ${product.category}">
+    <div class="product-image">
+      <button data-product="${product.id}" aria-label="قارن أسعار ${escapeHtml(product.name)}"><img src="${product.image}" alt="${escapeHtml(product.name)}" width="400" height="300" loading="lazy"></button>
+      <span class="offer-count">في ${count} ${count === 1 ? "متجر" : "متاجر"}</span>
+      <button class="icon-button ${favorite ? "is-favorite" : ""}" data-favorite="${product.id}" aria-label="${favorite ? "إزالة" : "حفظ"} ${escapeHtml(product.name)} ${favorite ? "من" : "في"} المفضلة" aria-pressed="${favorite}">${icon("heart")}</button>
+    </div>
+    <div class="product-body"><h3 class="product-name"><button data-product="${product.id}">${escapeHtml(product.name)}</button></h3><p class="product-unit">${escapeHtml(product.unit)}</p>
+      <div class="price-line"><div><span class="price-label">أقل سعر</span>${money(offer.price)}</div><span class="best-store"><i class="store-dot"></i>${escapeHtml(storeById.get(offer.storeId).name)}</span></div>
+      <p class="price-difference">${difference > 0 ? `فرق يصل إلى ${number.format(difference)} ر.س بين المتاجر` : count > 1 ? "نفس السعر في المتاجر المتاحة" : "عرض واحد متاح للمقارنة"}</p>
+      <div class="card-actions"><button class="compare-button" data-product="${product.id}">قارن الأسعار ${icon("arrow")}</button><button class="add-button" data-add="${product.id}" aria-label="أضف ${escapeHtml(product.name)} إلى قائمة التسوق">${icon("plus")}</button></div>
+    </div></article>`;
+}
+
+function renderCatalog() {
+  const filtered = filterProducts(products, state);
+  $("#product-grid").innerHTML = filtered
+    .slice(0, state.visible)
+    .map(productCard)
+    .join("");
+  $("#empty-state").hidden = filtered.length > 0;
+  $("#load-more").hidden = filtered.length <= state.visible;
+  $("#shown-count").textContent = filtered.length
+    ? `تستعرض ${Math.min(filtered.length, state.visible)} من ${filtered.length} منتج`
+    : "";
+  $("#result-count").textContent =
+    `${filtered.length} منتج · أسعار تجريبية لدى ${state.storeIds.length || stores.length} متاجر`;
+  const chips = [];
+  if (state.query) chips.push({ key: "query", label: `بحث: ${state.query}` });
+  if (state.category !== "all")
+    chips.push({
+      key: "category",
+      label: categories.find((category) => category.id === state.category)
+        .label,
+    });
+  if (state.favoritesOnly)
+    chips.push({ key: "favorites", label: "المحفوظة فقط" });
+  $("#active-filters").innerHTML = chips
+    .map(
+      (chip) =>
+        `<button class="filter-chip" data-clear="${chip.key}">${escapeHtml(chip.label)} ${icon("close")}</button>`,
+    )
+    .join("");
+  renderCategories();
+  updateCounts();
+}
+
+function resetFilters() {
+  Object.assign(state, {
+    query: "",
+    category: "all",
+    storeIds: [],
+    maxPrice: null,
+    sort: "featured",
+    favoritesOnly: false,
+    visible: 12,
+  });
+  $("#search-input").value = "";
+  $("#max-price").value = "";
+  $("#sort-select").value = "featured";
+  renderStores();
+  renderCatalog();
+}
+
+function openProduct(id, updateUrl = true) {
+  const product = productById.get(id);
+  if (!product) return;
+  selectedProduct = id;
+  renderProduct();
+  if (!$("#product-dialog").open) $("#product-dialog").showModal();
+  if (updateUrl) {
+    const url = new URL(location.href);
+    url.searchParams.set("product", id);
+    history.replaceState(null, "", url);
+  }
+}
+
+function renderProduct() {
+  const product = productById.get(selectedProduct);
+  if (!product) return;
+  const photo = photoCredits.find((credit) => credit.id === product.id);
+  const best = bestOffer(product);
+  const offers = [...product.offers].sort(
+    (a, b) => Number(b.available) - Number(a.available) || a.price - b.price,
+  );
+  const favorite = state.favoriteIds.includes(product.id);
+  $("#product-detail").innerHTML = `
+    <div class="dialog-top"><span>أسعار وتوفر تجريبيان · ليست عروضًا فعلية</span><button class="icon-button close-dialog" aria-label="إغلاق مقارنة المنتج">${icon("close")}</button></div>
+    <div class="detail-header"><img src="${product.image}" width="400" height="300" alt="${escapeHtml(product.name)}"><div><p class="eyebrow">قارن الأسعار بين المتاجر.</p><h2 id="product-dialog-title">${escapeHtml(product.name)}</h2><p>${escapeHtml(product.unit)} · ${offers.filter((offer) => offer.available).length} متاجر متاحة</p><p class="photo-source">صورة توضيحية من <a href="${escapeHtml(photo.sourcePage)}" target="_blank" rel="noopener noreferrer">كارفور ↗</a> · <button data-info="photos">كل المصادر</button></p></div></div>
+    <div class="detail-body"><div class="detail-section-head"><h3>الأسعار بين المتاجر</h3><span>لنفس العبوة · قبل التوصيل</span></div>
+      ${offers
+        .map((offer) => {
+          const store = storeById.get(offer.storeId);
+          const lowest = offer.available && offer.price === best.price;
+          const link = storeLink(product, store.id);
+          const linkHint =
+            link.kind === "web-search"
+              ? `بحث جوجل داخل موقع ${store.name}`
+              : link.kind === "search"
+                ? `نتائج البحث عن ${product.name}`
+                : "تحقق من العبوة والسعر في المتجر";
+          return `<div class="offer-row ${lowest ? "best" : ""} ${!offer.available ? "unavailable" : ""}"><span class="store-badge" style="--store-color:${store.color}">${escapeHtml(store.initial || store.name[0])}</span><div class="offer-store"><strong>${escapeHtml(store.name)}</strong>${lowest ? '<span class="best-label">الأقل سعرًا</span>' : ""}<small>${offer.available ? "متوفر في بيانات التجربة" : "غير متوفر في بيانات التجربة"}</small></div><div class="offer-price">${offer.available ? money(offer.price) : '<span class="missing-label">غير متوفر</span>'}${offer.available && product.quantity > 0 ? `<small>${number.format(offer.price / product.quantity)} ر.س / ${escapeHtml(product.unitType)}</small>` : ""}</div><div class="offer-link"><a href="${escapeHtml(link.href)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`${link.label}: ${product.name} لدى ${store.name}، يفتح في تبويب جديد`)}">${escapeHtml(link.label)} <span aria-hidden="true">↗</span></a><small>${escapeHtml(linkHint)}</small></div></div>`;
+        })
+        .join("")}
+      <p class="offer-note">روابط المتاجر تساعدك على التحقق من السعر الفعلي. قد تختلف العبوة أو العلامة التجارية. الأسعار والتوفر والتوصيل هنا بيانات تجريبية، وليست مأخوذة من الصفحات المرتبطة.</p>
+    </div>
+    <div class="dialog-bottom"><button class="button button-primary" data-add="${product.id}">${icon("plus")} أضف إلى قائمتي</button><button class="icon-button ${favorite ? "is-favorite" : ""}" data-favorite="${product.id}" aria-label="حفظ المنتج في المفضلة" aria-pressed="${favorite}">${icon("heart")}</button><button class="icon-button" data-share-product="${product.id}" aria-label="نسخ رابط مقارنة هذا المنتج">${icon("share")}</button></div>`;
+}
+
+function addToBasket(id) {
+  if (!productById.has(id)) return;
+  if ((state.basket[id] || 0) >= 99)
+    return toast("وصلت للحد الأقصى: 99 عبوة من المنتج.");
+  state.basket[id] = (state.basket[id] || 0) + 1;
+  toast(`أضفنا ${productById.get(id).name} إلى قائمتك`);
+  saveList();
+  updateCounts();
+  if ($("#basket-dialog").open) renderBasket();
+}
+
+function toggleFavorite(id) {
+  if (!productById.has(id)) return;
+  state.favoriteIds = state.favoriteIds.includes(id)
+    ? state.favoriteIds.filter((value) => value !== id)
+    : [...state.favoriteIds, id];
+  saveList();
+  renderCatalog();
+  if ($("#product-dialog").open) renderProduct();
+  const scope = $("#product-dialog").open
+    ? "#product-dialog "
+    : "#product-grid ";
+  const replacement =
+    $(`${scope}[data-favorite="${id}"]`) || $("#favorites-button");
+  replacement.focus({ preventScroll: true });
+}
+
+function openBasket() {
+  if ($("#product-dialog").open) $("#product-dialog").close();
+  renderBasket();
+  if (!$("#basket-dialog").open) $("#basket-dialog").showModal();
+}
+
+function renderBasket() {
+  const summary = basketSummary(products, stores, state.basket, {
+    includeDelivery: state.includeDelivery,
+  });
+  if (!summary.items.length) {
+    $("#basket-content").innerHTML =
+      `<div class="basket-empty">${icon("bag")}<h3>قائمتك تنتظر أول منتج</h3><p>أضف احتياجاتك، وقارن إجماليها بين المتاجر.</p><button class="button button-primary" data-action="browse">تصفّح المنتجات ${icon("arrow")}</button></div>`;
+    return;
+  }
+  const complete = summary.byStore
+    .filter((entry) => entry.complete)
+    .sort((a, b) => a.total - b.total);
+  const incomplete = summary.byStore.filter((entry) => !entry.complete);
+  const splitComplete = summary.items.every((item) => item.bestOffer);
+  $("#basket-content").innerHTML = `
+    <div class="basket-items">${summary.items.map((item) => `<article class="basket-item"><img src="${item.product.image}" width="400" height="300" alt="${escapeHtml(item.product.name)}"><div class="basket-item-info"><h3>${escapeHtml(item.product.name)}</h3><p>${escapeHtml(item.product.unit)} · ${item.bestOffer ? `أقل سعر للعبوة ${number.format(item.bestOffer.price)} ر.س` : "غير متوفر في جميع المتاجر"}</p><div class="quantity-control"><button data-quantity="${item.product.id}" data-change="-1" aria-label="تقليل كمية ${escapeHtml(item.product.name)}">−</button><output aria-label="عدد العبوات">${item.quantity}</output><button data-quantity="${item.product.id}" data-change="1" aria-label="زيادة كمية ${escapeHtml(item.product.name)}" ${item.quantity >= 99 ? "disabled" : ""}>+</button></div></div><div>${item.bestOffer ? money(Math.round(item.bestOffer.price * item.quantity * 100) / 100) : "غير متوفر"}</div><button class="icon-button" data-remove="${item.product.id}" aria-label="إزالة ${escapeHtml(item.product.name)} من القائمة">${icon("trash")}</button></article>`).join("")}</div>
+    <div class="basket-tools"><span>${summary.items.length} منتجات · ${summary.itemCount} عبوة</span><button data-action="clear-basket">تفريغ القائمة</button></div>
+    <label class="delivery-toggle"><span>إضافة رسوم التوصيل<small>رسوم وحد توصيل مجاني تجريبيان، وليسا رسوم المتاجر الفعلية</small></span><input id="include-delivery" type="checkbox" ${state.includeDelivery ? "checked" : ""}></label>
+    <div class="basket-results"><h3>قائمتك كاملة من متجر واحد</h3><p>نفس المنتجات والكميات. ${state.includeDelivery ? "تشمل التوصيل الافتراضي." : "بدون تكلفة التوصيل."}</p>
+      ${[...complete, ...incomplete].map((entry, index) => `<div class="store-total ${index === 0 && entry.complete ? "best" : ""}"><span class="store-badge" style="--store-color:${entry.store.color}">${escapeHtml(entry.store.initial || entry.store.name[0])}</span><div class="store-total-copy"><strong>${escapeHtml(entry.store.name)}</strong>${index === 0 && entry.complete ? '<span class="best-label">الأقل لمتجر واحد</span>' : ""}<small>${entry.complete ? `المنتجات ${number.format(entry.subtotal)} ر.س${state.includeDelivery ? ` + التوصيل ${number.format(entry.delivery)} ر.س` : ""}` : `ينقص ${entry.missingProductIds.length} منتج — لم يدخل في ترتيب الإجمالي`}</small></div>${entry.complete ? money(entry.total) : '<span class="missing-label">قائمة غير مكتملة</span>'}</div>`).join("")}
+      <details class="split-total"><summary><span>${splitComplete ? "أقل سعر لكل منتج، من عدة متاجر" : "منتجات متاحة فقط — قائمة غير مكتملة"}</span>${money(summary.split.total)}</summary><div class="split-breakdown"><p>هذا الخيار يجمع أقل سعر لكل منتج قبل رسوم التوصيل. قد يكون متجر واحد أوفر بعد إضافة الرسوم.${splitComplete ? "" : " الإجمالي لا يشمل المنتجات غير المتوفرة."}</p>${summary.split.byStore.map((entry) => `<div><span>${escapeHtml(storeById.get(entry.storeId).name)}<br><small>منتجات ${number.format(entry.subtotal)} + توصيل ${number.format(entry.delivery)} ر.س</small></span><strong>${number.format(entry.total)} ر.س</strong></div>`).join("")}<div><span>إجمالي التوصيل</span><strong>${number.format(summary.split.delivery)} ر.س</strong></div></div></details>
+    </div>
+    <p class="basket-data-note">أسعار ورسوم افتراضية للتجربة. لا توجد خدمة طلب أو دفع.</p>
+    <div class="basket-bottom"><button class="button button-primary" data-action="share-list">${icon("share")} مشاركة القائمة</button><button class="button button-outline" data-action="print">طباعة القائمة</button></div>`;
+}
+
+const infoPages = {
+  photos: `<p class="eyebrow">مصدر واحد للصور</p><h2 id="info-title">صور المنتجات من كارفور</h2><p>جميع صور المنتجات حقيقية ومن صفحات منتجات <a href="https://www.carrefourksa.com/" target="_blank" rel="noopener noreferrer">كارفور السعودية</a>. الصور للتوضيح؛ قد تختلف العلامة التجارية أو العبوة في المتاجر الأخرى. الأسعار المعروضة تجريبية وليست مأخوذة من صفحات الصور.</p><p>حقوق الصور لأصحابها. لكل صورة رابط لصفحة المنتج الأصلية أدناه.</p><ol class="photo-credits">${photoCredits.map((credit) => `<li><strong>${escapeHtml(productById.get(credit.id)?.name || credit.id)}</strong><span dir="auto">${escapeHtml(credit.title)}</span><a href="${escapeHtml(credit.sourcePage)}" target="_blank" rel="noopener noreferrer">صفحة المنتج والصورة في كارفور ↗</a></li>`).join("")}</ol>`,
+  about: `<p class="eyebrow">قرار الشراء يبدأ بمعلومة</p><h2 id="info-title">عن قارنها</h2><p>قارنها تجربة عربية تسهّل مقارنة سعر نفس المنتج بين المتاجر. تجمع المنتجات الغذائية والخضروات والفواكه والإلكترونيات واحتياجات المنزل في واجهة واحدة.</p><p>يمكنك ترتيب قائمة مشتريات، تغيير الكميات، ومقارنة التكلفة في متجر واحد أو جمع أقل سعر لكل منتج من عدة متاجر.</p><p>الموقع لا يستقبل مدفوعات أو طلبات، ولا توجد عمولات أو روابط تابعة في هذه النسخة.</p>`,
+  data: `<p class="eyebrow">وضوح من البداية</p><h2 id="info-title">عن الأسعار والمتاجر</h2><p><strong>أسماء المتاجر حقيقية. الأسعار والتوفر والتوصيل بيانات تجريبية وليست بيانات رسمية من المتاجر.</strong> هذه البيانات وضعت لتجربة الموقع، ولا تمثل عروضًا فعلية أو توصية بالشراء من أي متجر.</p><ul><li>كل مقارنة تخص نفس المنتج وحجم العبوة الموضح.</li><li>المنتج غير المتوفر يستبعد من أقل سعر.</li><li>فرق السعر في البطاقة لا يشمل التوصيل.</li><li>رسوم التوصيل وحد الشحن المجاني تحسب مرة لكل متجر في قائمة التسوق.</li></ul><p>زر «صفحة المنتج» يفتح صفحة في المتجر. زر «ابحث في المتجر» يفتح نتائج البحث باسمه. إذا لم تتوفر صفحة بحث عامة، يفتح زر «ابحث عن المنتج» بحث جوجل داخل موقع المتجر. الروابط لا تعني أن المنتج متوفر أو أن العبوة مطابقة؛ راجع التفاصيل والسعر لدى المتجر.</p><p>الأسعار التجريبية ليست مأخوذة من هذه الروابط، ولا تتحدث تلقائيًا من مواقع المتاجر.</p>`,
+  privacy: `<p class="eyebrow">قائمتك لك</p><h2 id="info-title">الخصوصية</h2><p>يحفظ الموقع قائمة التسوق والمفضلة في مساحة التخزين المحلية لهذا المتصفح. لا نطلب اسمك أو بريدك، ولا يوجد تسجيل حساب أو تتبع تحليلي مضاف للموقع.</p><p>يمكنك حذف القائمة من زر «تفريغ القائمة»، وإزالة المحفوظات من زر القلب. حذف بيانات الموقع من إعدادات المتصفح يمسح الجميع.</p><p>رابط مشاركة القائمة يتضمن رموز المنتجات وكمياتها في الرابط نفسه. يستطيع من يحصل على الرابط الاطلاع على هذه القائمة. الروابط الخارجية، مثل موقع المطور، لها سياسات خاصة بها.</p>`,
+};
+
+function openInfo(type) {
+  $("#info-content").innerHTML = infoPages[type] || infoPages.about;
+  $("#info-dialog").showModal();
+}
+
+async function copyLink(url) {
+  try {
+    if (!navigator.clipboard?.writeText)
+      throw new Error("Clipboard unavailable");
+    await navigator.clipboard.writeText(url);
+    toast("تم نسخ الرابط. تقدر تشاركه الآن.");
+  } catch {
+    $("#info-content").innerHTML =
+      `<h2 id="info-title">رابط المشاركة</h2><p>انسخ هذا الرابط لفتح المقارنة على جهاز آخر.</p><label class="copy-field">الرابط<textarea id="share-url" readonly dir="ltr">${escapeHtml(url)}</textarea></label>`;
+    if (!$("#info-dialog").open) $("#info-dialog").showModal();
+    $("#share-url").select();
+  }
+}
+
+function shareProduct(id) {
+  const url = new URL(location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("product", id);
+  copyLink(url.href);
+}
+
+function shareList() {
+  const url = new URL(location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("list", JSON.stringify(Object.entries(state.basket)));
+  copyLink(url.href);
+}
+
+function restoreSharedLink() {
+  const params = new URLSearchParams(location.search);
+  if (params.has("list")) {
+    try {
+      if (params.get("list").length > 8000) throw new Error("Too large");
+      const entries = JSON.parse(params.get("list"));
+      if (!Array.isArray(entries)) throw new Error("Invalid list");
+      let imported = false;
+      for (const entry of entries.slice(0, products.length)) {
+        if (!Array.isArray(entry) || entry.length !== 2) continue;
+        const [id, quantity] = entry;
+        if (
+          productById.has(id) &&
+          Number.isInteger(quantity) &&
+          quantity >= 1 &&
+          quantity <= 99
+        ) {
+          state.basket[id] = Math.max(state.basket[id] || 0, quantity);
+          imported = true;
+        }
+      }
+      if (imported) {
+        saveList();
+        updateCounts();
+        openBasket();
+        toast("أضفنا القائمة المشتركة إلى قائمتك الحالية.");
+      } else toast("رابط القائمة لا يحتوي على منتجات متاحة.");
+    } catch {
+      toast("تعذر فتح القائمة المشتركة. رابط القائمة غير صالح.");
+    }
+  } else if (productById.has(params.get("product")))
+    openProduct(params.get("product"), false);
+}
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("button");
+  if (!button) return;
+  if (button.classList.contains("close-dialog"))
+    return button.closest("dialog").close();
+  if (button.dataset.product) return openProduct(button.dataset.product);
+  if (button.dataset.add) return addToBasket(button.dataset.add);
+  if (button.dataset.favorite) return toggleFavorite(button.dataset.favorite);
+  if (button.dataset.shareProduct)
+    return shareProduct(button.dataset.shareProduct);
+  if (button.dataset.info) return openInfo(button.dataset.info);
+  if (button.dataset.category) {
+    state.category = button.dataset.category;
+    state.visible = 12;
+    renderCatalog();
+    $(`[data-category="${state.category}"]`)?.focus({ preventScroll: true });
+    $("#catalog").scrollIntoView({ behavior: "smooth" });
+  }
+  if (button.dataset.search) {
+    state.query = button.dataset.search;
+    state.category = "all";
+    state.visible = 12;
+    $("#search-input").value = state.query;
+    renderCatalog();
+    $("#catalog").scrollIntoView({ behavior: "smooth" });
+  }
+  if (button.dataset.clear) {
+    if (button.dataset.clear === "query") {
+      state.query = "";
+      $("#search-input").value = "";
+    }
+    if (button.dataset.clear === "category") state.category = "all";
+    if (button.dataset.clear === "favorites") state.favoritesOnly = false;
+    renderCatalog();
+  }
+  if (button.dataset.quantity) {
+    const id = button.dataset.quantity;
+    const change = Number(button.dataset.change);
+    const quantity = (state.basket[id] || 0) + change;
+    if (quantity <= 0) delete state.basket[id];
+    else state.basket[id] = Math.min(99, quantity);
+    saveList();
+    updateCounts();
+    renderBasket();
+    $(`[data-quantity="${id}"][data-change="${change}"]`)?.focus({
+      preventScroll: true,
+    });
+  }
+  if (button.dataset.remove) {
+    delete state.basket[button.dataset.remove];
+    saveList();
+    updateCounts();
+    renderBasket();
+  }
+  if (button.dataset.action === "reset") resetFilters();
+  if (button.dataset.action === "browse") {
+    $("#basket-dialog").close();
+    $("#catalog").scrollIntoView({ behavior: "smooth" });
+  }
+  if (button.dataset.action === "clear-basket") {
+    state.basket = {};
+    saveList();
+    updateCounts();
+    renderBasket();
+  }
+  if (button.dataset.action === "share-list") shareList();
+  if (button.dataset.action === "print") window.print();
+});
+
+$("#search-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  state.query = $("#search-input").value.trim().slice(0, 200);
+  state.visible = 12;
+  renderCatalog();
+  $("#catalog").scrollIntoView({ behavior: "smooth" });
+});
+$("#search-input").addEventListener("input", () => {
+  state.query = $("#search-input").value.trim().slice(0, 200);
+  state.visible = 12;
+  renderCatalog();
+});
+$("#sort-select").addEventListener("change", (event) => {
+  state.sort = event.target.value;
+  state.visible = 12;
+  renderCatalog();
+});
+$("#max-price").addEventListener("input", (event) => {
+  const value = event.target.value === "" ? null : Number(event.target.value);
+  state.maxPrice = Number.isFinite(value) && value >= 0 ? value : null;
+  state.visible = 12;
+  renderCatalog();
+});
+$("#store-filters").addEventListener("change", () => {
+  state.storeIds = [
+    ...$("#store-filters").querySelectorAll("input:checked"),
+  ].map((input) => input.value);
+  state.visible = 12;
+  renderCatalog();
+});
+$("#favorites-button").addEventListener("click", () => {
+  state.favoritesOnly = !state.favoritesOnly;
+  state.visible = 12;
+  renderCatalog();
+  $("#catalog").scrollIntoView({ behavior: "smooth" });
+});
+$("#reset-filters").addEventListener("click", resetFilters);
+$("#load-more").addEventListener("click", () => {
+  state.visible += 12;
+  renderCatalog();
+});
+$("#basket-button").addEventListener("click", openBasket);
+$("#banner-basket").addEventListener("click", openBasket);
+$("#basket-dialog").addEventListener("change", (event) => {
+  if (event.target.id === "include-delivery") {
+    state.includeDelivery = event.target.checked;
+    renderBasket();
+    $("#include-delivery").focus({ preventScroll: true });
+  }
+});
+$("#product-dialog").addEventListener("close", () => {
+  selectedProduct = null;
+  const url = new URL(location.href);
+  url.searchParams.delete("product");
+  history.replaceState(null, "", url);
+});
+document.querySelectorAll("dialog").forEach((dialog) => {
+  dialog.addEventListener("click", (event) => {
+    if (event.target !== dialog) return;
+    const box = dialog.getBoundingClientRect();
+    if (
+      event.clientX < box.left ||
+      event.clientX > box.right ||
+      event.clientY < box.top ||
+      event.clientY > box.bottom
+    )
+      dialog.close();
+  });
+});
+
+readSavedList();
+renderHero();
+renderStores();
+renderCatalog();
+restoreSharedLink();

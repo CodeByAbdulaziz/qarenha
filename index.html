@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#174b39" />
+    <meta
+      name="description"
+      content="قارن أسعار نفس المنتج بين المتاجر، ورتب قائمة مشترياتك بالريال السعودي. نسخة تجريبية ببيانات وأسعار افتراضية واضحة."
+    />
+    <title>قارنها | مقارنة الأسعار بين المتاجر</title>
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="./assets/fonts/arabic-regular.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#catalog">انتقل إلى المنتجات</a>
+    <div class="topline">
+      <div class="container">
+        <span>قرار أذكى، ومشتريات أوفر.</span
+        ><span class="demo-tag">نسخة تجريبية · أسعار افتراضية</span>
+      </div>
+    </div>
+    <header class="header">
+      <div class="container header-inner">
+        <a class="brand" href="./" aria-label="قارنها، الصفحة الرئيسية"
+          ><span class="brand-mark" aria-hidden="true"
+            ><svg viewBox="0 0 32 32">
+              <path d="M8 20V8h12M24 12v12H12M8 8l8 8M24 24l-8-8" /></svg></span
+          ><span>قارنها<span class="brand-dot">.</span></span></a
+        >
+        <nav aria-label="التنقل الرئيسي">
+          <a href="#catalog" class="active">تصفّح المنتجات</a
+          ><a href="#categories">التصنيفات</a><a href="#how">كيف تعمل؟</a>
+        </nav>
+        <div class="header-actions">
+          <button
+            id="favorites-button"
+            class="icon-button"
+            aria-label="عرض المنتجات المحفوظة"
+            aria-pressed="false"
+          >
+            <svg class="icon"><use href="#i-heart" /></svg
+            ><span id="favorites-count" class="small-count" hidden
+              >0</span
+            ></button
+          ><button id="basket-button" class="basket-button">
+            <svg class="icon"><use href="#i-bag" /></svg><span>قائمتي</span
+            ><span id="basket-count">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main>
+      <section class="hero container" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span>نفس المنتج. سعر مختلف.</p>
+          <h1 id="hero-title">قبل ما تشتري،<br /><span>قارنها.</span></h1>
+          <p class="hero-description">
+            من مقاضي البيت إلى أجهزتك الجديدة.<br />قارن أسعار المنتج بين
+            المتاجر، وخلّ الفرق بجيبك.
+          </p>
+          <form id="search-form" class="search-form" role="search">
+            <svg class="icon"><use href="#i-search" /></svg
+            ><label class="sr-only" for="search-input">ابحث عن منتج</label
+            ><input
+              id="search-input"
+              type="search"
+              placeholder="وش تدور عليه اليوم؟"
+              autocomplete="off"
+            /><button class="button button-primary" type="submit">
+              قارن السعر<svg class="icon"><use href="#i-arrow" /></svg>
+            </button>
+          </form>
+          <div class="popular-search">
+            <span>جرّب تبحث عن:</span><button data-search="حليب">حليب</button
+            ><button data-search="تفاح">تفاح</button
+            ><button data-search="سماعات">سماعات</button>
+          </div>
+        </div>
+        <div
+          id="hero-visual"
+          class="hero-visual"
+          aria-label="مثال على مقارنة أسعار منتج"
+        >
+          <div class="hero-orbit orbit-one"></div>
+          <div class="hero-orbit orbit-two"></div>
+          <div class="hero-spark" aria-hidden="true">✳</div>
+          <div id="hero-feature" class="hero-feature"></div>
+          <div class="hero-note">
+            <svg class="icon"><use href="#i-check" /></svg
+            ><span>الفرق يستاهل المقارنة</span>
+          </div>
+        </div>
+      </section>
+      <div class="promise-strip container">
+        <span
+          ><svg class="icon"><use href="#i-check" /></svg>مقارنة لنفس المنتج
+          والعبوة</span
+        ><span
+          ><svg class="icon"><use href="#i-price" /></svg>كل الأسعار بالريال
+          السعودي</span
+        ><span
+          ><svg class="icon"><use href="#i-bag" /></svg>قائمة مشتريات واحدة،
+          خيارات أكثر</span
+        >
+      </div>
+      <section
+        id="categories"
+        class="section container categories-section"
+        aria-labelledby="categories-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">من البيت، وللبيت</p>
+            <h2 id="categories-title">كل احتياجاتك، في مكان واحد</h2>
+          </div>
+          <a href="#catalog" class="text-link"
+            >شوف كل المنتجات <svg class="icon"><use href="#i-arrow" /></svg
+          ></a>
+        </div>
+        <div id="category-grid" class="category-grid"></div>
+      </section>
+      <section
+        id="catalog"
+        class="section catalog-section"
+        aria-labelledby="catalog-title"
+      >
+        <div class="container">
+          <div class="data-note">
+            <svg class="icon"><use href="#i-info" /></svg>
+            <p>
+              <strong>تجربة كاملة ببيانات توضيحية.</strong> أسماء المتاجر
+              حقيقية. الأسعار والتوفر والتوصيل بيانات تجريبية، وليست عروضًا
+              فعلية من المتاجر.
+            </p>
+            <button data-info="data">
+              عن البيانات <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+          <div class="section-heading catalog-heading">
+            <div>
+              <p class="eyebrow">قارن، وبعدها قرّر</p>
+              <h2 id="catalog-title">تصفّح وقارن</h2>
+              <p
+                id="result-count"
+                class="muted"
+                role="status"
+                aria-live="polite"
+              ></p>
+            </div>
+            <div class="sort-field">
+              <label for="sort-select">ترتيب حسب</label
+              ><select id="sort-select">
+                <option value="featured">الترتيب المقترح</option>
+                <option value="price-asc">الأقل سعرًا</option>
+                <option value="price-desc">الأعلى سعرًا</option>
+                <option value="savings">أكبر فرق سعر</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-bar">
+            <div class="store-filter">
+              <span>المتاجر:</span>
+              <div id="store-filters"></div>
+            </div>
+            <div class="budget-field">
+              <label for="max-price">حد السعر</label
+              ><input
+                id="max-price"
+                type="number"
+                min="0"
+                max="100000"
+                step="0.01"
+                placeholder="بدون حد"
+              /><span>ر.س</span>
+            </div>
+            <button id="reset-filters" class="reset-button">مسح الفلاتر</button>
+          </div>
+          <div id="active-filters" class="active-filters"></div>
+          <div id="product-grid" class="product-grid"></div>
+          <div id="empty-state" class="empty-state" hidden>
+            <svg class="icon"><use href="#i-search" /></svg>
+            <h3>ما لقينا منتج بهذي الخيارات</h3>
+            <p>جرّب اسمًا ثانيًا أو وسّع الفلاتر.</p>
+            <button class="button button-primary" data-action="reset">
+              عرض كل المنتجات
+            </button>
+          </div>
+          <div class="load-more-wrap">
+            <button id="load-more" class="button button-outline">
+              عرض منتجات أكثر <span aria-hidden="true">↓</span>
+            </button>
+            <p id="shown-count" class="muted"></p>
+          </div>
+        </div>
+      </section>
+      <section
+        id="how"
+        class="section container how-section"
+        aria-labelledby="how-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">أبسط مما تتوقع</p>
+            <h2 id="how-title">ثلاث خطوات. وقرار أوضح.</h2>
+          </div>
+          <p class="section-description">
+            خلك على بيّنة من السعر قبل ما تكمل مشترياتك.
+          </p>
+        </div>
+        <div class="steps-grid">
+          <article>
+            <span class="step-number">01</span
+            ><svg class="icon"><use href="#i-search" /></svg>
+            <h3>لقّ منتجك</h3>
+            <p>ابحث بالاسم، أو تصفّح التصنيفات من الفواكه إلى الإلكترونيات.</p>
+          </article>
+          <article>
+            <span class="step-number">02</span
+            ><svg class="icon"><use href="#i-price" /></svg>
+            <h3>شوف فرق السعر</h3>
+            <p>قارن نفس المنتج ونفس حجم العبوة بين المتاجر المتاحة.</p>
+          </article>
+          <article>
+            <span class="step-number">03</span
+            ><svg class="icon"><use href="#i-bag" /></svg>
+            <h3>رتّب قائمتك</h3>
+            <p>أضف احتياجاتك، وقارن إجماليها مع التوصيل أو بدونه.</p>
+          </article>
+        </div>
+      </section>
+      <section class="container list-banner">
+        <div>
+          <span class="eyebrow">المقارنة تصير أحلى مع قائمة</span>
+          <h2>كم تفرق مقاضيك<br />من متجر لمتجر؟</h2>
+          <p>اجمع احتياجاتك، وخلّ الأرقام تجاوبك.</p>
+          <button id="banner-basket" class="button button-yellow">
+            افتح قائمة التسوق <svg class="icon"><use href="#i-arrow" /></svg>
+          </button>
+        </div>
+        <div class="banner-visual" aria-hidden="true">
+          <div class="receipt">
+            <span>قائمة التوفير</span>
+            <div>نفس المنتجات <b>✓</b></div>
+            <div>نفس الكميات <b>✓</b></div>
+            <div>أسعار مختلفة <b>↙</b></div>
+            <strong>المقارنة تفرق.</strong>
+          </div>
+          <span class="banner-circle"></span>
+        </div>
+      </section>
+      <section
+        class="section container faq-section"
+        aria-labelledby="faq-title"
+      >
+        <div>
+          <p class="eyebrow">قبل ما تبدأ</p>
+          <h2 id="faq-title">أشياء ودك تعرفها</h2>
+        </div>
+        <div class="faq-items">
+          <details>
+            <summary>هل الأسعار المعروضة حقيقية؟</summary>
+            <p>
+              لا. الأسعار والتوفر ورسوم التوصيل هنا بيانات تجريبية. لا تمثل
+              عروضًا فعلية من العثيم أو بنده أو كارفور أو التميمي، ولا تتحدث
+              تلقائيًا من هذه المتاجر.
+            </p>
+          </details>
+          <details>
+            <summary>كيف تتأكدون أن المقارنة عادلة؟</summary>
+            <p>
+              نقارن عروض نفس المنتج والعبوة المحددة في البطاقة. يظهر سعر الوحدة
+              أيضًا عندما يكون ذلك مناسبًا. فرق السعر لا يشمل التوصيل؛ يمكن
+              إضافته عند مقارنة قائمة التسوق.
+            </p>
+          </details>
+          <details>
+            <summary>هل أحتاج أسجل حساب؟</summary>
+            <p>
+              لا تحتاج حسابًا. المفضلة وقائمة التسوق تحفظان في هذا المتصفح فقط.
+              يمكن مشاركة رابط القائمة لفتح نسخة منها على جهاز آخر.
+            </p>
+          </details>
+          <details>
+            <summary>هل أقدر أشتري من الموقع؟</summary>
+            <p>
+              قارنها أداة مقارنة تجريبية، ولا تستقبل طلبات أو مدفوعات. افتح
+              مقارنة أي منتج للانتقال إلى صفحته أو البحث عنه في المتجر، ثم تحقق
+              من العبوة والسعر الفعلي هناك.
+            </p>
+          </details>
+        </div>
+      </section>
+    </main>
+    <footer class="footer">
+      <div class="container footer-main">
+        <div>
+          <a class="brand" href="./"
+            ><span class="brand-mark" aria-hidden="true"
+              ><svg viewBox="0 0 32 32">
+                <path
+                  d="M8 20V8h12M24 12v12H12M8 8l8 8M24 24l-8-8"
+                /></svg></span
+            ><span>قارنها.</span></a
+          >
+          <p>قارن السعر، ووفّر الفرق.</p>
+        </div>
+        <div class="footer-links">
+          <button data-info="about">عن قارنها</button
+          ><button data-info="data">مصادر الأسعار</button
+          ><button data-info="privacy">الخصوصية</button
+          ><button data-info="photos">مصادر الصور</button
+          ><a
+            href="https://codebyabdulaziz.github.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >صنعه عبدالعزيز ↗</a
+          >
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span>© 2026 قارنها</span
+        ><span>بيانات تجريبية · لا توجد خدمة شراء أو دفع</span
+        ><span>بالريال السعودي <span class="saudi-dot"></span></span>
+      </div>
+    </footer>
+    <dialog
+      id="product-dialog"
+      class="product-dialog"
+      aria-labelledby="product-dialog-title"
+    >
+      <div id="product-detail"></div>
+    </dialog>
+    <dialog
+      id="basket-dialog"
+      class="basket-dialog"
+      aria-labelledby="basket-title"
+    >
+      <div class="drawer-header">
+        <div>
+          <p class="eyebrow">كل احتياجاتك هنا</p>
+          <h2 id="basket-title">قائمة التوفير</h2>
+        </div>
+        <button
+          class="icon-button close-dialog"
+          aria-label="إغلاق قائمة التسوق"
+        >
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <div id="basket-content"></div>
+    </dialog>
+    <dialog id="info-dialog" class="info-dialog" aria-labelledby="info-title">
+      <button class="icon-button close-dialog" aria-label="إغلاق">
+        <svg class="icon"><use href="#i-close" /></svg>
+      </button>
+      <div id="info-content"></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <svg
+      class="svg-sprite"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <symbol id="i-search" viewBox="0 0 24 24">
+          <circle cx="10.5" cy="10.5" r="6.5" />
+          <path d="m16 16 5 5" />
+        </symbol>
+        <symbol id="i-bag" viewBox="0 0 24 24">
+          <path d="M5 7h14l1 14H4L5 7Z" />
+          <path d="M8 8V6a4 4 0 0 1 8 0v2" />
+        </symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24">
+          <path
+            d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"
+          />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+          <path d="M20 12H4m7-7-7 7 7 7" />
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+          <path d="m5 12 4 4L19 6" />
+        </symbol>
+        <symbol id="i-price" viewBox="0 0 24 24">
+          <path d="m3 11 8-8h9v9l-8 8-9-9Z" />
+          <circle cx="16" cy="7" r="1" />
+          <path d="m7 12 5 5" />
+        </symbol>
+        <symbol id="i-info" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 10v7m0-11v1" />
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24">
+          <path d="M12 5v14M5 12h14" />
+        </symbol>
+        <symbol id="i-share" viewBox="0 0 24 24">
+          <path d="M12 16V3m-5 5 5-5 5 5M5 13v7h14v-7" />
+        </symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24">
+          <path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6m4-6v6" />
+        </symbol>
+        <symbol id="i-fruit" viewBox="0 0 24 24">
+          <path
+            d="M12 7c-7-5-12 5-6 13 2 3 4 0 6 1 2-1 4 2 6-1 6-8 1-18-6-13ZM12 7c0-4 3-6 6-5-1 3-3 4-6 4"
+          />
+        </symbol>
+        <symbol id="i-vegetable" viewBox="0 0 24 24">
+          <path d="m8 8 8 8-12 5L8 8Zm5-4 3 6 5-3M18 2l-2 8M8 13l3 3" />
+        </symbol>
+        <symbol id="i-grocery" viewBox="0 0 24 24">
+          <path d="M5 8h14l-2 13H7L5 8Zm3 0 4-6 4 6M9 12v5m6-5v5M3 8h18" />
+        </symbol>
+        <symbol id="i-electronics" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="13" rx="2" />
+          <path d="M8 21h8m-4-5v5M7 7h6" />
+        </symbol>
+        <symbol id="i-drink" viewBox="0 0 24 24">
+          <path d="M7 7h10l-1 14H8L7 7Zm5 0V3h5M5 7h14" />
+        </symbol>
+        <symbol id="i-home" viewBox="0 0 24 24">
+          <path d="m3 10 9-8 9 8M5 9v12h14V9M9 21v-8h6v8" />
+        </symbol>
+        <symbol id="i-grid" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="2" />
+          <rect x="14" y="3" width="7" height="7" rx="2" />
+          <rect x="3" y="14" width="7" height="7" rx="2" />
+          <rect x="14" y="14" width="7" height="7" rx="2" />
+        </symbol>
+      </defs>
+    </svg>
+    <noscript
+      ><p class="noscript-note">
+        فعّل جافاسكربت لاستخدام البحث ومقارنة الأسعار وقائمة التسوق.
+      </p></noscript
+    >
+  </body>
+</html>
