@@ -1,6 +1,6 @@
-import { products, categories, stores } from "./catalog.js";
-import { photoCredits } from "./photo-credits.js";
-import { storeLink } from "./store-links.js";
+import { products, categories, stores } from "./catalog.js?v=20261020";
+import { photoCredits } from "./photo-credits.js?v=20261020";
+import { storeLink } from "./store-links.js?v=20261020";
 import {
   availableOffers,
   bestOffer,

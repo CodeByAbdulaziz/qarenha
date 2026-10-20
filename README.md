@@ -88,3 +88,5 @@ python -m http.server 8080
 ```
 
 After editing, commit and push your changes to `main` to update the live website.
+
+Scripts, styles, and module imports use a version in their URLs, such as `?v=20261020`. Increase this version across the changed files and their imports when publishing a new release. This lets returning visitors load the new files instead of an older cached copy.

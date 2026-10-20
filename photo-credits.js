@@ -1,5 +1,5 @@
 // Real product photos from Carrefour Saudi Arabia. Image rights belong to their owners.
-import { extraPhotoCredits } from "./extra-products.js";
+import { extraPhotoCredits } from "./extra-products.js?v=20261020";
 
 export const photoCredits = [
   {

@@ -1,4 +1,4 @@
-import { photoCredits } from "./photo-credits.js";
+import { photoCredits } from "./photo-credits.js?v=20261020";
 
 // These links are for browsing stores. They are not sources for the demo prices.
 export const productPages = {

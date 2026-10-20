@@ -1,5 +1,5 @@
 // Store names are real. Prices, stock and delivery fees are sample data, not store offers.
-import { extraCategories, extraProducts } from "./extra-products.js";
+import { extraCategories, extraProducts } from "./extra-products.js?v=20261020";
 
 export const DATA_MODE = "demo";
 
