@@ -1,4 +1,6 @@
 // Real product photos from Carrefour Saudi Arabia. Image rights belong to their owners.
+import { extraPhotoCredits } from "./extra-products.js";
+
 export const photoCredits = [
   {
     id: "apple",
@@ -277,4 +279,5 @@ export const photoCredits = [
     merchantUnit: "750 ml",
     source: "Carrefour Saudi Arabia",
   },
+  ...extraPhotoCredits,
 ];

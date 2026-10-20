@@ -2037,6 +2037,25 @@ dialog::backdrop {
   padding: 0;
 }
 
+.offer-note a,
+.faq-items a {
+  color: var(--green);
+  text-underline-offset: 3px;
+}
+
+.product-help {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 12px;
+  font-size: 11px;
+}
+
+.product-help a {
+  color: var(--green);
+  text-underline-offset: 3px;
+}
+
 .copy-field {
   display: flex;
   flex-direction: column;

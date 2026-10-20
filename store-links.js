@@ -1,3 +1,5 @@
+import { photoCredits } from "./photo-credits.js";
+
 // These links are for browsing stores. They are not sources for the demo prices.
 export const productPages = {
   apple: {
@@ -76,7 +78,11 @@ export function storeLink(product, storeId) {
   const domain = storeDomains[storeId];
   if (!domain) return null;
 
-  const directUrl = productPages[product.id]?.[storeId];
+  const directUrl =
+    productPages[product.id]?.[storeId] ||
+    (storeId === "carrefour"
+      ? photoCredits.find((photo) => photo.id === product.id)?.sourcePage
+      : null);
   if (directUrl) {
     return { href: directUrl, kind: "product", label: "صفحة المنتج" };
   }

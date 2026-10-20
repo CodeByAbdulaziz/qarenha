@@ -1,4 +1,6 @@
 // Store names are real. Prices, stock and delivery fees are sample data, not store offers.
+import { extraCategories, extraProducts } from "./extra-products.js";
+
 export const DATA_MODE = "demo";
 
 export const categories = [
@@ -8,6 +10,7 @@ export const categories = [
   { id: "electronics", label: "إلكترونيات", icon: "electronics" },
   { id: "drinks", label: "مشروبات", icon: "drinks" },
   { id: "home", label: "احتياجات المنزل", icon: "home" },
+  ...extraCategories,
 ];
 
 export const stores = [
@@ -257,7 +260,7 @@ export const products = [
   {
     id: "eggs",
     name: "بيض طازج",
-    category: "groceries",
+    category: "dairy",
     unit: "30 حبة",
     quantity: 30,
     unitType: "قطعة",
@@ -273,7 +276,7 @@ export const products = [
   {
     id: "milk",
     name: "حليب كامل الدسم",
-    category: "groceries",
+    category: "dairy",
     unit: "1 لتر",
     quantity: 1,
     unitType: "لتر",
@@ -289,7 +292,7 @@ export const products = [
   {
     id: "bread",
     name: "خبز قمح كامل أسمر",
-    category: "groceries",
+    category: "bakery",
     unit: "600 جم",
     quantity: 0.6,
     unitType: "كجم",
@@ -494,4 +497,5 @@ export const products = [
       { storeId: "tamimi", price: 7.95, available: true },
     ],
   },
+  ...extraProducts,
 ];
