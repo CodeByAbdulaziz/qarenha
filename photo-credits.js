@@ -1,5 +1,6 @@
 // Real product photos from Carrefour Saudi Arabia. Image rights belong to their owners.
-import { extraPhotoCredits } from "./extra-products.js?v=20261020";
+import { extraPhotoCredits } from "./extra-products.js?v=20261021";
+import { morePhotoCredits } from "./more-products.js?v=20261021";
 
 export const photoCredits = [
   {
@@ -280,4 +281,5 @@ export const photoCredits = [
     source: "Carrefour Saudi Arabia",
   },
   ...extraPhotoCredits,
+  ...morePhotoCredits,
 ];

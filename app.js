@@ -1,13 +1,14 @@
-import { products, categories, stores } from "./catalog.js?v=20261020";
-import { photoCredits } from "./photo-credits.js?v=20261020";
-import { storeLink } from "./store-links.js?v=20261020";
+import { products, categories, stores } from "./catalog.js?v=20261021";
+import { photoCredits } from "./photo-credits.js?v=20261021";
+import { storeLink } from "./store-links.js?v=20261021";
 import {
   availableOffers,
+  unverifiedOffers,
   bestOffer,
   savingFor,
   filterProducts,
   basketSummary,
-} from "./pricing.js";
+} from "./pricing.js?v=20261021";
 
 const $ = (selector) => document.querySelector(selector);
 const productById = new Map(products.map((product) => [product.id, product]));
@@ -166,15 +167,17 @@ function productCard(product) {
   const count = availableOffers(product, state.storeIds).length;
   const difference = savingFor(product, state.storeIds);
   const favorite = state.favoriteIds.includes(product.id);
+  const unknown = unverifiedOffers(product, state.storeIds);
+  const unknownStore = storeById.get(unknown[0]?.storeId);
   return `<article class="product-card ${product.category}">
     <div class="product-image">
       <button data-product="${product.id}" aria-label="قارن أسعار ${escapeHtml(product.name)}"><img src="${product.image}" alt="${escapeHtml(product.name)}" width="400" height="300" loading="lazy"></button>
-      <span class="offer-count">في ${count} ${count === 1 ? "متجر" : "متاجر"}</span>
+      <span class="offer-count">${count ? `في ${count} ${count === 1 ? "متجر" : "متاجر"}` : "تحقق من السعر"}</span>
       <button class="icon-button ${favorite ? "is-favorite" : ""}" data-favorite="${product.id}" aria-label="${favorite ? "إزالة" : "حفظ"} ${escapeHtml(product.name)} ${favorite ? "من" : "في"} المفضلة" aria-pressed="${favorite}">${icon("heart")}</button>
     </div>
     <div class="product-body"><h3 class="product-name"><button data-product="${product.id}">${escapeHtml(product.name)}</button></h3><p class="product-unit">${escapeHtml(product.unit)}</p>
-      <div class="price-line"><div><span class="price-label">أقل سعر</span>${money(offer.price)}</div><span class="best-store"><i class="store-dot"></i>${escapeHtml(storeById.get(offer.storeId).name)}</span></div>
-      <p class="price-difference">${difference > 0 ? `فرق يصل إلى ${number.format(difference)} ر.س بين المتاجر` : count > 1 ? "نفس السعر في المتاجر المتاحة" : "عرض واحد متاح للمقارنة"}</p>
+      <div class="price-line"><div><span class="price-label">${offer ? "أقل سعر تجريبي" : "السعر والتوفر"}</span>${offer ? money(offer.price) : '<span class="missing-label">غير متحققين</span>'}</div><span class="best-store">${escapeHtml(offer ? storeById.get(offer.storeId).name : unknownStore?.name || "راجع المتجر")}</span></div>
+      <p class="price-difference">${!offer ? "افتح المتجر وتحقق من العبوة والسعر والتوفر" : difference > 0 ? `فرق يصل إلى ${number.format(difference)} ر.س بين المتاجر` : count > 1 ? "نفس السعر في بيانات التجربة" : "سعر تجريبي واحد للمقارنة"}</p>
       <div class="card-actions"><button class="compare-button" data-product="${product.id}">قارن الأسعار ${icon("arrow")}</button><button class="add-button" data-add="${product.id}" aria-label="أضف ${escapeHtml(product.name)} إلى قائمة التسوق">${icon("plus")}</button></div>
     </div></article>`;
 }
@@ -190,8 +193,19 @@ function renderCatalog() {
   $("#shown-count").textContent = filtered.length
     ? `تستعرض ${Math.min(filtered.length, state.visible)} من ${filtered.length} منتج`
     : "";
-  $("#result-count").textContent =
-    `${filtered.length} منتج · أسعار تجريبية لدى ${state.storeIds.length || stores.length} متاجر`;
+  const selectedStores = stores.filter(
+    (store) => !state.storeIds.length || state.storeIds.includes(store.id),
+  );
+  const pricedStores = selectedStores.filter(
+    (store) => store.priceMode !== "unverified",
+  ).length;
+  $("#result-count").textContent = pricedStores
+    ? `${filtered.length} منتج · أسعار تجريبية لدى ${pricedStores} متاجر${selectedStores.some((store) => store.priceMode === "unverified") ? " · أمازون للتحقق من السعر" : ""}`
+    : `${filtered.length} منتج · سعر أمازون وتوفره غير متحققين`;
+  $("#empty-state p").textContent =
+    !pricedStores && state.maxPrice !== null
+      ? "لا يمكن تطبيق حد السعر على أسعار غير متحقق منها. امسح الحد أو اختر متجرًا له بيانات سعر."
+      : "جرّب اسمًا ثانيًا أو وسّع الفلاتر.";
   const chips = [];
   if (state.query) chips.push({ key: "query", label: `بحث: ${state.query}` });
   if (state.category !== "all")
@@ -247,18 +261,23 @@ function renderProduct() {
   if (!product) return;
   const photo = photoCredits.find((credit) => credit.id === product.id);
   const best = bestOffer(product);
+  const statusRank = (offer) =>
+    offer.available === true ? 2 : offer.available === false ? 1 : 0;
   const offers = [...product.offers].sort(
-    (a, b) => Number(b.available) - Number(a.available) || a.price - b.price,
+    (a, b) => statusRank(b) - statusRank(a) || (a.price ?? 0) - (b.price ?? 0),
   );
   const favorite = state.favoriteIds.includes(product.id);
   $("#product-detail").innerHTML = `
     <div class="dialog-top"><span>أسعار وتوفر تجريبيان · ليست عروضًا فعلية</span><button class="icon-button close-dialog" aria-label="إغلاق مقارنة المنتج">${icon("close")}</button></div>
-    <div class="detail-header"><img src="${product.image}" width="400" height="300" alt="${escapeHtml(product.name)}"><div><p class="eyebrow">قارن الأسعار بين المتاجر.</p><h2 id="product-dialog-title">${escapeHtml(product.name)}</h2><p>${escapeHtml(product.unit)} · ${offers.filter((offer) => offer.available).length} متاجر متاحة</p><p class="photo-source">صورة توضيحية من <a href="${escapeHtml(photo.sourcePage)}" target="_blank" rel="noopener noreferrer">كارفور ↗</a> · <button data-info="photos">كل المصادر</button></p></div></div>
+    <div class="detail-header"><img src="${product.image}" width="400" height="300" alt="${escapeHtml(product.name)}"><div><p class="eyebrow">قارن الأسعار بين المتاجر.</p><h2 id="product-dialog-title">${escapeHtml(product.name)}</h2><p>${escapeHtml(product.unit)} · ${availableOffers(product).length} متاجر بأسعار تجريبية</p><p class="photo-source">صورة توضيحية من <a href="${escapeHtml(photo.sourcePage)}" target="_blank" rel="noopener noreferrer">كارفور ↗</a> · <button data-info="photos">كل المصادر</button></p></div></div>
     <div class="detail-body"><div class="detail-section-head"><h3>الأسعار بين المتاجر</h3><span>لنفس العبوة · قبل التوصيل</span></div>
       ${offers
         .map((offer) => {
           const store = storeById.get(offer.storeId);
-          const lowest = offer.available && offer.price === best.price;
+          const unverified = offer.available === null;
+          const hasPrice =
+            offer.available === true && Number.isFinite(offer.price);
+          const lowest = hasPrice && offer.price === best?.price;
           const link = storeLink(product, store.id);
           const linkHint =
             link.kind === "web-search"
@@ -266,10 +285,10 @@ function renderProduct() {
               : link.kind === "search"
                 ? `نتائج البحث عن ${product.name}`
                 : "تحقق من العبوة والسعر في المتجر";
-          return `<div class="offer-row ${lowest ? "best" : ""} ${!offer.available ? "unavailable" : ""}"><span class="store-badge" style="--store-color:${store.color}">${escapeHtml(store.initial || store.name[0])}</span><div class="offer-store"><strong>${escapeHtml(store.name)}</strong>${lowest ? '<span class="best-label">الأقل سعرًا</span>' : ""}<small>${offer.available ? "متوفر في بيانات التجربة" : "غير متوفر في بيانات التجربة"}</small></div><div class="offer-price">${offer.available ? money(offer.price) : '<span class="missing-label">غير متوفر</span>'}${offer.available && product.quantity > 0 ? `<small>${number.format(offer.price / product.quantity)} ر.س / ${escapeHtml(product.unitType)}</small>` : ""}</div><div class="offer-link"><a href="${escapeHtml(link.href)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`${link.label}: ${product.name} لدى ${store.name}، يفتح في تبويب جديد`)}">${escapeHtml(link.label)} <span aria-hidden="true">↗</span></a><small>${escapeHtml(linkHint)}</small></div></div>`;
+          return `<div class="offer-row ${lowest ? "best" : ""} ${offer.available === false ? "unavailable" : ""} ${unverified ? "unverified" : ""}"><span class="store-badge" style="--store-color:${store.color}">${escapeHtml(store.initial || store.name[0])}</span><div class="offer-store"><strong>${escapeHtml(store.name)}</strong>${lowest ? '<span class="best-label">الأقل سعرًا</span>' : ""}<small>${unverified ? "السعر والتوفر غير متحققين" : hasPrice ? "متوفر في بيانات التجربة" : "غير متوفر في بيانات التجربة"}</small></div><div class="offer-price">${hasPrice ? money(offer.price) : `<span class="missing-label">${unverified ? "راجع المتجر" : "غير متوفر"}</span>`}${hasPrice && product.quantity > 0 ? `<small>${number.format(offer.price / product.quantity)} ر.س / ${escapeHtml(product.unitType)}</small>` : ""}</div><div class="offer-link"><a href="${escapeHtml(link.href)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`${link.label}: ${product.name} لدى ${store.name}، يفتح في تبويب جديد`)}">${escapeHtml(link.label)} <span aria-hidden="true">↗</span></a><small>${escapeHtml(linkHint)}</small></div></div>`;
         })
         .join("")}
-      <p class="offer-note">روابط المتاجر تساعدك على التحقق من السعر الفعلي. قد تختلف العبوة أو العلامة التجارية. الأسعار والتوفر والتوصيل هنا بيانات تجريبية، وليست مأخوذة من الصفحات المرتبطة.</p>
+      <p class="offer-note">أسعار بنده وكارفور والتميمي بيانات تجريبية. لم نتحقق من سعر أمازون أو توفر المنتج لديه، لذلك لا يدخل في ترتيب الأرخص. تحقق من العلامة والعبوة وعدد القطع والبائع والتوصيل داخل المتجر؛ نتائج البحث قد تعرض عبوات متعددة أو منتجات مختلفة.</p>
       <div class="product-help"><a href="./legal.html#prices">لماذا قد يختلف السعر؟</a><a href="./legal.html?product=${encodeURIComponent(product.id)}#corrections">بلّغ عن خطأ في المنتج</a></div>
     </div>
     <div class="dialog-bottom"><button class="button button-primary" data-add="${product.id}">${icon("plus")} أضف إلى قائمتي</button><button class="icon-button ${favorite ? "is-favorite" : ""}" data-favorite="${product.id}" aria-label="حفظ المنتج في المفضلة" aria-pressed="${favorite}">${icon("heart")}</button><button class="icon-button" data-share-product="${product.id}" aria-label="نسخ رابط مقارنة هذا المنتج">${icon("share")}</button></div>`;
@@ -308,6 +327,19 @@ function openBasket() {
   if (!$("#basket-dialog").open) $("#basket-dialog").showModal();
 }
 
+function storeTotalRow(entry, index) {
+  const ranked = entry.complete && entry.total !== null;
+  const unverified = entry.unverifiedProductIds.length > 0;
+  const description = unverified
+    ? `لم نتحقق من سعر وتوفر ${entry.unverifiedProductIds.length} منتج · خارج ترتيب الإجمالي`
+    : !entry.shippingKnown
+      ? "رسوم التوصيل غير متحققة · لم يحسب الإجمالي مع التوصيل"
+      : ranked
+        ? `المنتجات ${number.format(entry.subtotal)} ر.س${state.includeDelivery ? ` + التوصيل ${number.format(entry.delivery)} ر.س` : ""}`
+        : `ينقص ${entry.missingProductIds.length} منتج في بيانات التجربة · خارج ترتيب الإجمالي`;
+  return `<div class="store-total ${index === 0 && ranked ? "best" : ""}"><span class="store-badge" style="--store-color:${entry.store.color}">${escapeHtml(entry.store.initial || entry.store.name[0])}</span><div class="store-total-copy"><strong>${escapeHtml(entry.store.name)}</strong>${index === 0 && ranked ? '<span class="best-label">الأقل لمتجر واحد</span>' : ""}<small>${description}</small></div>${ranked ? money(entry.total) : `<span class="missing-label">${unverified ? "أسعار غير متحققة" : !entry.shippingKnown ? "التوصيل غير متحقق" : "قائمة غير مكتملة"}</span>`}</div>`;
+}
+
 function renderBasket() {
   const summary = basketSummary(products, stores, state.basket, {
     includeDelivery: state.includeDelivery,
@@ -318,17 +350,19 @@ function renderBasket() {
     return;
   }
   const complete = summary.byStore
-    .filter((entry) => entry.complete)
+    .filter((entry) => entry.complete && entry.total !== null)
     .sort((a, b) => a.total - b.total);
-  const incomplete = summary.byStore.filter((entry) => !entry.complete);
+  const incomplete = summary.byStore.filter(
+    (entry) => !entry.complete || entry.total === null,
+  );
   const splitComplete = summary.items.every((item) => item.bestOffer);
   $("#basket-content").innerHTML = `
-    <div class="basket-items">${summary.items.map((item) => `<article class="basket-item"><img src="${item.product.image}" width="400" height="300" alt="${escapeHtml(item.product.name)}"><div class="basket-item-info"><h3>${escapeHtml(item.product.name)}</h3><p>${escapeHtml(item.product.unit)} · ${item.bestOffer ? `أقل سعر للعبوة ${number.format(item.bestOffer.price)} ر.س` : "غير متوفر في جميع المتاجر"}</p><div class="quantity-control"><button data-quantity="${item.product.id}" data-change="-1" aria-label="تقليل كمية ${escapeHtml(item.product.name)}">−</button><output aria-label="عدد العبوات">${item.quantity}</output><button data-quantity="${item.product.id}" data-change="1" aria-label="زيادة كمية ${escapeHtml(item.product.name)}" ${item.quantity >= 99 ? "disabled" : ""}>+</button></div></div><div>${item.bestOffer ? money(Math.round(item.bestOffer.price * item.quantity * 100) / 100) : "غير متوفر"}</div><button class="icon-button" data-remove="${item.product.id}" aria-label="إزالة ${escapeHtml(item.product.name)} من القائمة">${icon("trash")}</button></article>`).join("")}</div>
+    <div class="basket-items">${summary.items.map((item) => `<article class="basket-item"><img src="${item.product.image}" width="400" height="300" alt="${escapeHtml(item.product.name)}"><div class="basket-item-info"><h3>${escapeHtml(item.product.name)}</h3><p>${escapeHtml(item.product.unit)} · ${item.bestOffer ? `أقل سعر للعبوة ${number.format(item.bestOffer.price)} ر.س` : unverifiedOffers(item.product).length ? "السعر والتوفر غير متحققين" : "غير متوفر في بيانات التجربة"}</p><div class="quantity-control"><button data-quantity="${item.product.id}" data-change="-1" aria-label="تقليل كمية ${escapeHtml(item.product.name)}">−</button><output aria-label="عدد العبوات">${item.quantity}</output><button data-quantity="${item.product.id}" data-change="1" aria-label="زيادة كمية ${escapeHtml(item.product.name)}" ${item.quantity >= 99 ? "disabled" : ""}>+</button></div></div><div>${item.bestOffer ? money(Math.round(item.bestOffer.price * item.quantity * 100) / 100) : "لم يحسب"}</div><button class="icon-button" data-remove="${item.product.id}" aria-label="إزالة ${escapeHtml(item.product.name)} من القائمة">${icon("trash")}</button></article>`).join("")}</div>
     <div class="basket-tools"><span>${summary.items.length} منتجات · ${summary.itemCount} عبوة</span><button data-action="clear-basket">تفريغ القائمة</button></div>
     <label class="delivery-toggle"><span>إضافة رسوم التوصيل<small>رسوم وحد توصيل مجاني تجريبيان، وليسا رسوم المتاجر الفعلية</small></span><input id="include-delivery" type="checkbox" ${state.includeDelivery ? "checked" : ""}></label>
     <div class="basket-results"><h3>قائمتك كاملة من متجر واحد</h3><p>نفس المنتجات والكميات. ${state.includeDelivery ? "تشمل التوصيل الافتراضي." : "بدون تكلفة التوصيل."}</p>
-      ${[...complete, ...incomplete].map((entry, index) => `<div class="store-total ${index === 0 && entry.complete ? "best" : ""}"><span class="store-badge" style="--store-color:${entry.store.color}">${escapeHtml(entry.store.initial || entry.store.name[0])}</span><div class="store-total-copy"><strong>${escapeHtml(entry.store.name)}</strong>${index === 0 && entry.complete ? '<span class="best-label">الأقل لمتجر واحد</span>' : ""}<small>${entry.complete ? `المنتجات ${number.format(entry.subtotal)} ر.س${state.includeDelivery ? ` + التوصيل ${number.format(entry.delivery)} ر.س` : ""}` : `ينقص ${entry.missingProductIds.length} منتج — لم يدخل في ترتيب الإجمالي`}</small></div>${entry.complete ? money(entry.total) : '<span class="missing-label">قائمة غير مكتملة</span>'}</div>`).join("")}
-      <details class="split-total"><summary><span>${splitComplete ? "أقل سعر لكل منتج، من عدة متاجر" : "منتجات متاحة فقط — قائمة غير مكتملة"}</span>${money(summary.split.total)}</summary><div class="split-breakdown"><p>هذا الخيار يجمع أقل سعر لكل منتج قبل رسوم التوصيل. قد يكون متجر واحد أوفر بعد إضافة الرسوم.${splitComplete ? "" : " الإجمالي لا يشمل المنتجات غير المتوفرة."}</p>${summary.split.byStore.map((entry) => `<div><span>${escapeHtml(storeById.get(entry.storeId).name)}<br><small>منتجات ${number.format(entry.subtotal)} + توصيل ${number.format(entry.delivery)} ر.س</small></span><strong>${number.format(entry.total)} ر.س</strong></div>`).join("")}<div><span>إجمالي التوصيل</span><strong>${number.format(summary.split.delivery)} ر.س</strong></div></div></details>
+      ${[...complete, ...incomplete].map(storeTotalRow).join("")}
+      <details class="split-total"><summary><span>${splitComplete ? "أقل سعر لكل منتج، من عدة متاجر" : "لا تتوفر بيانات سعر كاملة للقائمة"}</span>${summary.split.total !== null ? money(summary.split.total) : '<span class="missing-label">الإجمالي غير محسوب</span>'}</summary><div class="split-breakdown"><p>هذا الخيار يجمع أقل سعر لكل منتج قبل رسوم التوصيل. قد يكون متجر واحد أوفر بعد إضافة الرسوم.${splitComplete ? "" : " لم تحسب قائمة كاملة؛ قد توجد أسعار أو حالة توفر غير متحققة."}</p>${summary.split.byStore.map((entry) => `<div><span>${escapeHtml(storeById.get(entry.storeId).name)}<br><small>منتجات ${number.format(entry.subtotal)} ر.س · ${entry.delivery === null ? "التوصيل غير متحقق" : `توصيل ${number.format(entry.delivery)} ر.س`}</small></span><strong>${entry.total === null ? "الإجمالي غير محسوب" : `${number.format(entry.total)} ر.س`}</strong></div>`).join("")}<div><span>إجمالي التوصيل</span><strong>${summary.split.delivery === null ? "غير متحقق" : `${number.format(summary.split.delivery)} ر.س`}</strong></div></div></details>
     </div>
     <p class="basket-data-note">أسعار ورسوم افتراضية للتجربة. لا توجد خدمة طلب أو دفع.</p>
     <div class="basket-bottom"><button class="button button-primary" data-action="share-list">${icon("share")} مشاركة القائمة</button><button class="button button-outline" data-action="print">طباعة القائمة</button></div>`;
@@ -337,7 +371,7 @@ function renderBasket() {
 const infoPages = {
   photos: `<p class="eyebrow">مصدر واحد للصور</p><h2 id="info-title">صور المنتجات من كارفور</h2><p>جميع صور المنتجات حقيقية ومن صفحات منتجات <a href="https://www.carrefourksa.com/" target="_blank" rel="noopener noreferrer">كارفور السعودية</a>. الصور للتوضيح؛ قد تختلف العلامة التجارية أو العبوة في المتاجر الأخرى. الأسعار المعروضة تجريبية وليست مأخوذة من صفحات الصور.</p><p>حقوق الصور لأصحابها. لكل صورة رابط لصفحة المنتج الأصلية أدناه.</p><ol class="photo-credits">${photoCredits.map((credit) => `<li><strong>${escapeHtml(productById.get(credit.id)?.name || credit.id)}</strong><span dir="auto">${escapeHtml(credit.title)}</span><a href="${escapeHtml(credit.sourcePage)}" target="_blank" rel="noopener noreferrer">صفحة المنتج والصورة في كارفور ↗</a></li>`).join("")}</ol>`,
   about: `<p class="eyebrow">قرار الشراء يبدأ بمعلومة</p><h2 id="info-title">عن قارنها</h2><p>قارنها تجربة عربية لمقارنة أسعار توضيحية بين المتاجر. تجمع الغذائيات والخضروات والفواكه والإلكترونيات والعناية الشخصية واحتياجات الطفل والمنزل في واجهة واحدة.</p><p>يمكنك ترتيب قائمة مشتريات، تغيير الكميات، ومقارنة التكلفة في متجر واحد أو جمع أقل سعر لكل منتج من عدة متاجر.</p><p>الموقع لا يستقبل مدفوعات أو طلبات، ولا توجد عمولات أو روابط تابعة في هذه النسخة.</p><p><a href="./legal.html#terms">شروط الاستخدام والسياسات</a></p>`,
-  data: `<p class="eyebrow">وضوح من البداية</p><h2 id="info-title">عن الأسعار والمتاجر</h2><p><strong>أسماء المتاجر حقيقية. الأسعار والتوفر والتوصيل بيانات تجريبية وليست عروضًا رسمية أو أسعارًا محدثة من المتاجر.</strong></p><ul><li>حساب المقارنة يستخدم المنتج والعبوة في بيانات التجربة؛ الصور قد تخص علامة أو عبوة مختلفة.</li><li>المنتج غير المتوفر في بيانات التجربة يستبعد من أقل سعر.</li><li>فرق السعر في البطاقة لا يشمل التوصيل، ورسوم التوصيل في القائمة افتراضية.</li></ul><p>الأسعار الفعلية قد تختلف حسب الوقت والمدينة والفرع والعبوة والعضوية والكوبونات والضرائب ورسوم التوصيل. صفحة المتجر وإجمالي سلته هما المرجع قبل الشراء.</p><p>الروابط تفتح صفحة المنتج أو نتائج البحث في المتجر، ولا تؤكد السعر أو التوفر. بحث العثيم يفتح جوجل داخل موقع المتجر.</p><p><a href="./legal.html#prices">تنبيه الأسعار وحدود المقارنة</a> · <a href="./legal.html#corrections">الإبلاغ عن معلومة خاطئة</a></p>`,
+  data: `<p class="eyebrow">وضوح من البداية</p><h2 id="info-title">عن الأسعار والمتاجر</h2><p><strong>أسماء المتاجر حقيقية. الأسعار والتوفر والتوصيل بيانات تجريبية وليست عروضًا رسمية أو أسعارًا محدثة من المتاجر.</strong></p><ul><li>حساب المقارنة يستخدم المنتج والعبوة في بيانات التجربة؛ الصور قد تخص علامة أو عبوة مختلفة.</li><li>المنتج غير المتوفر في بيانات التجربة يستبعد من أقل سعر.</li><li>فرق السعر في البطاقة لا يشمل التوصيل، ورسوم التوصيل في القائمة افتراضية.</li></ul><p>الأسعار الفعلية قد تختلف حسب الوقت والمدينة والفرع والعبوة والعضوية والكوبونات والضرائب ورسوم التوصيل. صفحة المتجر وإجمالي سلته هما المرجع قبل الشراء.</p><p>الروابط تفتح صفحة المنتج أو نتائج البحث في المتجر، ولا تؤكد السعر أو التوفر. رابط أمازون يفتح صفحة المنتج أو نتائج البحث بالمنتج والعبوة؛ السعر والتوفر والتوصيل غير متحقق منها ولا تدخل في ترتيب الأرخص.</p><p><a href="./legal.html#prices">تنبيه الأسعار وحدود المقارنة</a> · <a href="./legal.html#corrections">الإبلاغ عن معلومة خاطئة</a></p>`,
 };
 
 function openInfo(type) {

@@ -1,5 +1,5 @@
-// Prices and availability below are fictional demo data, not store offers.
-// Product photos are from Carrefour Saudi Arabia. Image rights belong to their owners.
+// Priced offers are fictional demo data. Amazon prices and stock are unverified.
+// Photos come from Carrefour Saudi Arabia. Image rights belong to their owners.
 
 export const extraCategories = [
   {
@@ -46,11 +46,6 @@ export const extraProducts = [
     tags: ["زبادي", "روب", "yogurt", "yoghurt"],
     offers: [
       {
-        storeId: "othaim",
-        price: 1.85,
-        available: true,
-      },
-      {
         storeId: "panda",
         price: 1.95,
         available: true,
@@ -65,6 +60,11 @@ export const extraProducts = [
         price: 2.25,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -77,11 +77,6 @@ export const extraProducts = [
     image: "./assets/products/cheddar-cheese.avif",
     tags: ["جبن", "شيدر", "cheddar cheese", "cheese slices"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 9.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 8.75,
@@ -97,6 +92,11 @@ export const extraProducts = [
         price: 9.5,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -109,11 +109,6 @@ export const extraProducts = [
     image: "./assets/products/butter.avif",
     tags: ["زبدة", "غير مملحة", "butter", "unsalted butter"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 14.75,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 15.25,
@@ -129,6 +124,11 @@ export const extraProducts = [
         price: 14.5,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -141,11 +141,6 @@ export const extraProducts = [
     image: "./assets/products/cream.avif",
     tags: ["قشطة", "قشطه", "cream", "thick cream"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 6.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 6.75,
@@ -161,6 +156,11 @@ export const extraProducts = [
         price: 6.5,
         available: false,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -173,11 +173,6 @@ export const extraProducts = [
     image: "./assets/products/croissant.avif",
     tags: ["كرواسون", "سادة", "croissant", "plain croissant"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 1.75,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 1.9,
@@ -193,6 +188,11 @@ export const extraProducts = [
         price: 2.1,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -205,11 +205,6 @@ export const extraProducts = [
     image: "./assets/products/tortilla.avif",
     tags: ["خبز", "تورتيلا", "tortilla", "wraps"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 9.25,
-        available: false,
-      },
       {
         storeId: "panda",
         price: 8.95,
@@ -225,6 +220,11 @@ export const extraProducts = [
         price: 9.75,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -237,11 +237,6 @@ export const extraProducts = [
     image: "./assets/products/burger-buns.jpg",
     tags: ["خبز", "برجر", "burger buns", "whole grain buns"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 5.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 5.5,
@@ -257,6 +252,11 @@ export const extraProducts = [
         price: 5.75,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -269,11 +269,6 @@ export const extraProducts = [
     image: "./assets/products/baguette.avif",
     tags: ["خبز", "فرنسي", "baguette", "bread"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 3.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 3.5,
@@ -289,6 +284,11 @@ export const extraProducts = [
         price: 4.25,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -301,11 +301,6 @@ export const extraProducts = [
     image: "./assets/products/frozen-peas.avif",
     tags: ["بازلاء", "بسلة", "frozen peas", "peas"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 6.5,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 6.25,
@@ -320,6 +315,11 @@ export const extraProducts = [
         storeId: "tamimi",
         price: 6.75,
         available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
       },
     ],
   },
@@ -339,11 +339,6 @@ export const extraProducts = [
     ],
     offers: [
       {
-        storeId: "othaim",
-        price: 6.75,
-        available: true,
-      },
-      {
         storeId: "panda",
         price: 6.5,
         available: false,
@@ -358,6 +353,11 @@ export const extraProducts = [
         price: 6.95,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -370,11 +370,6 @@ export const extraProducts = [
     image: "./assets/products/frozen-fries.avif",
     tags: ["بطاطس", "مجمدة", "frozen fries", "french fries"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 12.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 11.75,
@@ -390,6 +385,11 @@ export const extraProducts = [
         price: 12.95,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -402,11 +402,6 @@ export const extraProducts = [
     image: "./assets/products/frozen-strawberry.jpg",
     tags: ["فراولة", "فراوله", "frozen strawberry", "frozen berries"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 12.5,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 11.5,
@@ -422,6 +417,11 @@ export const extraProducts = [
         price: 12.75,
         available: false,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -434,11 +434,6 @@ export const extraProducts = [
     image: "./assets/products/chicken-breast.avif",
     tags: ["دجاج", "صدور", "chicken breast", "chicken fillet"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 19.75,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 18.95,
@@ -454,6 +449,11 @@ export const extraProducts = [
         price: 21.5,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -466,11 +466,6 @@ export const extraProducts = [
     image: "./assets/products/whole-chicken.avif",
     tags: ["دجاج", "كامل", "whole chicken", "fresh chicken"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 17.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 16.95,
@@ -486,6 +481,11 @@ export const extraProducts = [
         price: 17.75,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -498,11 +498,6 @@ export const extraProducts = [
     image: "./assets/products/beef-mince.avif",
     tags: ["لحم", "مفروم", "beef mince", "minced beef"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 25.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 24.75,
@@ -518,6 +513,11 @@ export const extraProducts = [
         price: 26.5,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -530,11 +530,6 @@ export const extraProducts = [
     image: "./assets/products/beef-steak.avif",
     tags: ["لحم", "ستيك", "beef steak", "steak"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 31.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 30.5,
@@ -550,6 +545,11 @@ export const extraProducts = [
         price: 32.75,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -562,11 +562,6 @@ export const extraProducts = [
     image: "./assets/products/shampoo.avif",
     tags: ["شامبو", "شعر", "shampoo", "hair care"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 19.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 18.75,
@@ -582,6 +577,11 @@ export const extraProducts = [
         price: 20.25,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -594,11 +594,6 @@ export const extraProducts = [
     image: "./assets/products/bar-soap.avif",
     tags: ["صابون", "جسم", "bar soap", "soap"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 6.95,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 6.5,
@@ -614,6 +609,11 @@ export const extraProducts = [
         price: 7.5,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -626,11 +626,6 @@ export const extraProducts = [
     image: "./assets/products/toothpaste.jpg",
     tags: ["معجون", "اسنان", "أسنان", "toothpaste"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 9.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 8.75,
@@ -646,6 +641,11 @@ export const extraProducts = [
         price: 9.75,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -658,11 +658,6 @@ export const extraProducts = [
     image: "./assets/products/deodorant.avif",
     tags: ["مزيل", "عرق", "deodorant", "body spray"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 18.5,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 17.95,
@@ -678,6 +673,11 @@ export const extraProducts = [
         price: 18.95,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -690,11 +690,6 @@ export const extraProducts = [
     image: "./assets/products/diapers.jpg",
     tags: ["حفاضات", "اطفال", "أطفال", "diapers", "size 4"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 109.5,
-        available: false,
-      },
       {
         storeId: "panda",
         price: 104.95,
@@ -710,6 +705,11 @@ export const extraProducts = [
         price: 111.75,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -722,11 +722,6 @@ export const extraProducts = [
     image: "./assets/products/baby-wipes.avif",
     tags: ["مناديل", "مبللة", "baby wipes", "wet wipes"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 12.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 11.95,
@@ -742,6 +737,11 @@ export const extraProducts = [
         price: 12.75,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -754,11 +754,6 @@ export const extraProducts = [
     image: "./assets/products/baby-shampoo.avif",
     tags: ["شامبو", "اطفال", "أطفال", "baby shampoo"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 16.25,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 15.75,
@@ -774,6 +769,11 @@ export const extraProducts = [
         price: 16.95,
         available: true,
       },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -786,11 +786,6 @@ export const extraProducts = [
     image: "./assets/products/baby-bath.jpg",
     tags: ["غسول", "استحمام", "baby bath", "baby wash"],
     offers: [
-      {
-        storeId: "othaim",
-        price: 20.5,
-        available: true,
-      },
       {
         storeId: "panda",
         price: 19.75,
@@ -805,6 +800,11 @@ export const extraProducts = [
         storeId: "tamimi",
         price: 21.5,
         available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
       },
     ],
   },

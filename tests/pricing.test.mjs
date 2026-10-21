@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   availableOffers,
+  unverifiedOffers,
   bestOffer,
   savingFor,
   normalizeSearch,
@@ -207,4 +208,187 @@ test("an out-of-stock basket reports the item without a fake full-plan saving", 
   assert.equal(summary.bestSingleStore, null);
   assert.equal(summary.split.totalSavings, 0);
   assert.ok(summary.byStore.every((entry) => !entry.complete));
+});
+
+test("unknown offers stay separate from available and out-of-stock offers", () => {
+  const item = product("x", "x", [
+    offer("amazon", null, null),
+    offer("a", 12),
+    offer("b", 4, false),
+  ]);
+  assert.deepEqual(availableOffers(item), [offer("a", 12)]);
+  assert.deepEqual(unverifiedOffers(item), [offer("amazon", null, null)]);
+  assert.deepEqual(unverifiedOffers(item, ["a"]), []);
+  assert.equal(bestOffer(item).storeId, "a");
+  assert.equal(bestOffer(item, ["amazon"]), null);
+  assert.equal(savingFor(item), 0);
+});
+
+test("unknown-store browsing keeps matching products but cannot prove a budget", () => {
+  const items = [
+    product(
+      "rice",
+      "أرز بسمتي",
+      [offer("amazon", null, null), offer("a", 10)],
+      {
+        tags: ["طعام"],
+      },
+    ),
+    product("soap", "صابون", [offer("amazon", null, null)], {
+      category: "care",
+    }),
+    product("unavailable", "غير متوفر", [offer("amazon", 5, false)]),
+  ];
+  assert.deepEqual(
+    filterProducts(items, { storeIds: ["amazon"] }).map((item) => item.id),
+    ["rice", "soap"],
+  );
+  assert.deepEqual(
+    filterProducts(items, {
+      storeIds: ["amazon"],
+      query: "ارز طعام",
+      category: "food",
+      favoritesOnly: true,
+      favoriteIds: ["rice"],
+    }).map((item) => item.id),
+    ["rice"],
+  );
+  assert.deepEqual(
+    filterProducts(items, { storeIds: ["amazon"], maxPrice: 100 }),
+    [],
+  );
+  assert.deepEqual(
+    filterProducts(items, { storeIds: ["amazon"], maxPrice: 0 }),
+    [],
+  );
+  assert.deepEqual(
+    filterProducts(items, { maxPrice: 10 }).map((item) => item.id),
+    ["rice"],
+  );
+});
+
+test("both price sorts leave unknown prices last in their original order", () => {
+  const items = [
+    product("unknown-first", "x", [offer("amazon", null, null)]),
+    product("expensive", "x", [offer("a", 20)]),
+    product("unknown-second", "x", [offer("amazon", null, null)]),
+    product("cheap", "x", [offer("a", 2)]),
+  ];
+  const before = structuredClone(items);
+  assert.deepEqual(
+    filterProducts(items, { sort: "price-asc" }).map((item) => item.id),
+    ["cheap", "expensive", "unknown-first", "unknown-second"],
+  );
+  assert.deepEqual(
+    filterProducts(items, { sort: "price-desc" }).map((item) => item.id),
+    ["expensive", "cheap", "unknown-first", "unknown-second"],
+  );
+  assert.deepEqual(items, before);
+});
+
+test("an unknown-only store has no zero-priced basket or false stock claim", () => {
+  const merchants = [
+    stores[0],
+    { id: "amazon", name: "Amazon", deliveryFee: null, freeDeliveryFrom: null },
+  ];
+  const items = [
+    product("known", "x", [offer("a", 10), offer("amazon", null, null)]),
+    product("unknown", "y", [
+      offer("a", 12, false),
+      offer("amazon", null, null),
+    ]),
+  ];
+  const summary = basketSummary(items, merchants, { known: 1, unknown: 1 });
+  const amazon = summary.byStore[1];
+  assert.deepEqual(amazon.unverifiedProductIds, ["known", "unknown"]);
+  assert.deepEqual(amazon.missingProductIds, []);
+  assert.equal(amazon.subtotal, null);
+  assert.equal(amazon.delivery, null);
+  assert.equal(amazon.total, null);
+  assert.equal(amazon.shippingKnown, false);
+  assert.equal(amazon.complete, false);
+  assert.equal(summary.bestSingleStore, null);
+  assert.equal(summary.split.total, null);
+  assert.equal(summary.split.delivery, null);
+  assert.equal(summary.split.shippingKnown, false);
+  assert.equal(summary.split.totalSavings, 0);
+
+  const unknownOnly = basketSummary(
+    [items[1]],
+    [merchants[1]],
+    { unknown: 1 },
+    {
+      includeDelivery: false,
+    },
+  );
+  assert.equal(unknownOnly.itemCount, 1);
+  assert.equal(unknownOnly.split.total, null);
+  assert.equal(unknownOnly.split.delivery, null);
+  assert.equal(unknownOnly.byStore[0].subtotal, null);
+  assert.equal(unknownOnly.byStore[0].total, null);
+  assert.equal(unknownOnly.bestSingleStore, null);
+});
+
+test("a store with priced and unknown items preserves only its known subtotal", () => {
+  const merchants = [stores[0]];
+  const items = [
+    product("known", "x", [offer("a", 5)]),
+    product("unknown", "y", [offer("a", null, null)]),
+  ];
+  const summary = basketSummary(items, merchants, { known: 2, unknown: 1 });
+  assert.equal(summary.byStore[0].subtotal, 10);
+  assert.equal(summary.byStore[0].delivery, null);
+  assert.equal(summary.byStore[0].total, null);
+  assert.deepEqual(summary.byStore[0].unverifiedProductIds, ["unknown"]);
+  assert.deepEqual(summary.byStore[0].missingProductIds, []);
+  assert.equal(summary.byStore[0].complete, false);
+  assert.equal(summary.bestSingleStore, null);
+  assert.equal(summary.split.subtotal, 10);
+  assert.equal(summary.split.total, null);
+  assert.equal(summary.split.totalSavings, 0);
+});
+
+test("unknown shipping cannot become free delivery or win delivered rankings", () => {
+  const merchants = [
+    {
+      id: "known",
+      name: "Known shipping",
+      deliveryFee: 4,
+      freeDeliveryFrom: 100,
+    },
+    {
+      id: "unknown",
+      name: "Unknown shipping",
+      deliveryFee: null,
+      freeDeliveryFrom: null,
+    },
+  ];
+  const items = [product("x", "x", [offer("unknown", 1), offer("known", 10)])];
+  const summary = basketSummary(items, merchants, { x: 1 });
+  assert.equal(summary.byStore[1].complete, true);
+  assert.equal(summary.byStore[1].subtotal, 1);
+  assert.equal(summary.byStore[1].shippingKnown, false);
+  assert.equal(summary.byStore[1].delivery, null);
+  assert.equal(summary.byStore[1].total, null);
+  assert.equal(summary.bestSingleStore.store.id, "known");
+  assert.equal(summary.bestSingleStore.total, 14);
+  assert.equal(summary.split.shippingKnown, false);
+  assert.equal(summary.split.delivery, null);
+  assert.equal(summary.split.total, null);
+  assert.equal(summary.split.byStore[0].shippingKnown, false);
+  assert.equal(summary.split.byStore[0].total, null);
+  assert.equal(summary.split.totalSavings, 0);
+
+  const withoutShipping = basketSummary(
+    items,
+    merchants,
+    { x: 1 },
+    {
+      includeDelivery: false,
+    },
+  );
+  assert.equal(withoutShipping.bestSingleStore.store.id, "unknown");
+  assert.equal(withoutShipping.split.total, 1);
+  assert.equal(withoutShipping.split.delivery, 0);
+  assert.equal(withoutShipping.split.shippingKnown, true);
 });

@@ -1,27 +1,45 @@
-// Store names are real. Prices, stock and delivery fees are sample data, not store offers.
-import { extraCategories, extraProducts } from "./extra-products.js?v=20261020";
+// Store names are real. Priced offers are fictional demo data.
+// Amazon prices, stock and delivery have not been verified.
+import { extraCategories, extraProducts } from "./extra-products.js?v=20261021";
+import { moreProducts } from "./more-products.js?v=20261021";
 
 export const DATA_MODE = "demo";
 
 export const categories = [
-  { id: "groceries", label: "مواد غذائية", icon: "groceries" },
-  { id: "vegetables", label: "خضروات", icon: "vegetables" },
-  { id: "fruits", label: "فواكه", icon: "fruits" },
-  { id: "electronics", label: "إلكترونيات", icon: "electronics" },
-  { id: "drinks", label: "مشروبات", icon: "drinks" },
-  { id: "home", label: "احتياجات المنزل", icon: "home" },
+  {
+    id: "groceries",
+    label: "مواد غذائية",
+    icon: "groceries",
+  },
+  {
+    id: "vegetables",
+    label: "خضروات",
+    icon: "vegetables",
+  },
+  {
+    id: "fruits",
+    label: "فواكه",
+    icon: "fruits",
+  },
+  {
+    id: "electronics",
+    label: "إلكترونيات",
+    icon: "electronics",
+  },
+  {
+    id: "drinks",
+    label: "مشروبات",
+    icon: "drinks",
+  },
+  {
+    id: "home",
+    label: "احتياجات المنزل",
+    icon: "home",
+  },
   ...extraCategories,
 ];
 
 export const stores = [
-  {
-    id: "othaim",
-    name: "العثيم",
-    initial: "ع",
-    color: "#087F5B",
-    deliveryFee: 12,
-    freeDeliveryFrom: 150,
-  },
   {
     id: "panda",
     name: "بنده",
@@ -46,6 +64,15 @@ export const stores = [
     deliveryFee: 9,
     freeDeliveryFrom: 100,
   },
+  {
+    id: "amazon",
+    name: "أمازون السعودية",
+    initial: "أ",
+    color: "#B56B00",
+    deliveryFee: null,
+    freeDeliveryFrom: null,
+    priceMode: "unverified",
+  },
 ];
 
 export const products = [
@@ -59,10 +86,26 @@ export const products = [
     image: "./assets/products/apple.avif",
     tags: ["تفاح", "فاكهة", "apple", "red apple"],
     offers: [
-      { storeId: "othaim", price: 8.95, available: true },
-      { storeId: "panda", price: 9.5, available: true },
-      { storeId: "carrefour", price: 10.25, available: true },
-      { storeId: "tamimi", price: 9.25, available: true },
+      {
+        storeId: "panda",
+        price: 9.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 10.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 9.25,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -75,10 +118,26 @@ export const products = [
     image: "./assets/products/banana.avif",
     tags: ["موز", "فاكهة", "banana"],
     offers: [
-      { storeId: "othaim", price: 5.95, available: true },
-      { storeId: "panda", price: 5.95, available: true },
-      { storeId: "carrefour", price: 6.5, available: true },
-      { storeId: "tamimi", price: 6.25, available: true },
+      {
+        storeId: "panda",
+        price: 5.95,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 6.5,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 6.25,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -91,26 +150,58 @@ export const products = [
     image: "./assets/products/orange.avif",
     tags: ["برتقال", "فاكهة", "orange"],
     offers: [
-      { storeId: "othaim", price: 6.75, available: true },
-      { storeId: "panda", price: 6.25, available: true },
-      { storeId: "carrefour", price: 7.5, available: true },
-      { storeId: "tamimi", price: 6.95, available: true },
+      {
+        storeId: "panda",
+        price: 6.25,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 7.5,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 6.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
     id: "avocado",
     name: "أفوكادو",
     category: "fruits",
-    unit: "500 جم",
-    quantity: 0.5,
-    unitType: "كجم",
+    unit: "عبوة · الوزن غير مذكور",
+    quantity: null,
+    unitType: "عبوة",
     image: "./assets/products/avocado.avif",
     tags: ["افوكادو", "أفوكادو", "فاكهة", "avocado"],
     offers: [
-      { storeId: "othaim", price: 12.5, available: true },
-      { storeId: "panda", price: 11.95, available: true },
-      { storeId: "carrefour", price: 13.75, available: false },
-      { storeId: "tamimi", price: 12.95, available: true },
+      {
+        storeId: "panda",
+        price: 11.95,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 13.75,
+        available: false,
+      },
+      {
+        storeId: "tamimi",
+        price: 12.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -123,10 +214,26 @@ export const products = [
     image: "./assets/products/strawberry.jpg",
     tags: ["فراولة", "فراوله", "فاكهة", "strawberry", "berries"],
     offers: [
-      { storeId: "othaim", price: 9.95, available: true },
-      { storeId: "panda", price: 10.5, available: true },
-      { storeId: "carrefour", price: 11, available: true },
-      { storeId: "tamimi", price: 8.95, available: true },
+      {
+        storeId: "panda",
+        price: 10.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 11,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 8.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -139,10 +246,26 @@ export const products = [
     image: "./assets/products/lemon.avif",
     tags: ["ليمون", "فاكهة", "lemon", "citrus"],
     offers: [
-      { storeId: "othaim", price: 4.75, available: true },
-      { storeId: "panda", price: 4.5, available: true },
-      { storeId: "carrefour", price: 5.25, available: true },
-      { storeId: "tamimi", price: 4.95, available: true },
+      {
+        storeId: "panda",
+        price: 4.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 5.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 4.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -155,10 +278,26 @@ export const products = [
     image: "./assets/products/tomato.avif",
     tags: ["طماطم", "خضار", "tomato"],
     offers: [
-      { storeId: "othaim", price: 4.95, available: true },
-      { storeId: "panda", price: 5.5, available: true },
-      { storeId: "carrefour", price: 4.75, available: true },
-      { storeId: "tamimi", price: 5.25, available: true },
+      {
+        storeId: "panda",
+        price: 5.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 4.75,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 5.25,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -171,26 +310,58 @@ export const products = [
     image: "./assets/products/cucumber.avif",
     tags: ["خيار", "خضار", "cucumber"],
     offers: [
-      { storeId: "othaim", price: 4.5, available: true },
-      { storeId: "panda", price: 4.95, available: true },
-      { storeId: "carrefour", price: 5.25, available: true },
-      { storeId: "tamimi", price: 4.25, available: true },
+      {
+        storeId: "panda",
+        price: 4.95,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 5.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 4.25,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
     id: "potato",
     name: "بطاطس",
     category: "vegetables",
-    unit: "2 كجم",
-    quantity: 2,
+    unit: "1 كجم",
+    quantity: 1,
     unitType: "كجم",
     image: "./assets/products/potato.avif",
     tags: ["بطاطس", "بطاطا", "خضار", "potato"],
     offers: [
-      { storeId: "othaim", price: 7.5, available: true },
-      { storeId: "panda", price: 6.95, available: true },
-      { storeId: "carrefour", price: 8.25, available: true },
-      { storeId: "tamimi", price: 7.95, available: true },
+      {
+        storeId: "panda",
+        price: 6.95,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 8.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 7.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -203,26 +374,58 @@ export const products = [
     image: "./assets/products/carrot.avif",
     tags: ["جزر", "خضار", "carrot"],
     offers: [
-      { storeId: "othaim", price: 5.75, available: true },
-      { storeId: "panda", price: 5.25, available: true },
-      { storeId: "carrefour", price: 6.25, available: true },
-      { storeId: "tamimi", price: 5.95, available: false },
+      {
+        storeId: "panda",
+        price: 5.25,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 6.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 5.95,
+        available: false,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
     id: "pepper",
     name: "فلفل ألوان",
     category: "vegetables",
-    unit: "500 جم",
-    quantity: 0.5,
-    unitType: "كجم",
+    unit: "صينية · الوزن غير مذكور",
+    quantity: null,
+    unitType: "عبوة",
     image: "./assets/products/pepper.avif",
     tags: ["فلفل", "فلفل رومي", "خضار", "pepper", "capsicum"],
     offers: [
-      { storeId: "othaim", price: 7.95, available: true },
-      { storeId: "panda", price: 8.5, available: true },
-      { storeId: "carrefour", price: 9.25, available: true },
-      { storeId: "tamimi", price: 7.5, available: true },
+      {
+        storeId: "panda",
+        price: 8.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 9.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 7.5,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -235,10 +438,26 @@ export const products = [
     image: "./assets/products/rice.avif",
     tags: ["ارز", "أرز", "رز", "بسمتي", "rice"],
     offers: [
-      { storeId: "othaim", price: 39.95, available: true },
-      { storeId: "panda", price: 42.5, available: true },
-      { storeId: "carrefour", price: 44.95, available: true },
-      { storeId: "tamimi", price: 41.25, available: true },
+      {
+        storeId: "panda",
+        price: 42.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 44.95,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 41.25,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -251,10 +470,26 @@ export const products = [
     image: "./assets/products/oats.jpg",
     tags: ["شوفان", "حبوب", "oats", "breakfast"],
     offers: [
-      { storeId: "othaim", price: 8.5, available: true },
-      { storeId: "panda", price: 7.95, available: true },
-      { storeId: "carrefour", price: 9.25, available: true },
-      { storeId: "tamimi", price: 8.95, available: true },
+      {
+        storeId: "panda",
+        price: 7.95,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 9.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 8.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -267,10 +502,26 @@ export const products = [
     image: "./assets/products/eggs.avif",
     tags: ["بيض", "eggs", "breakfast"],
     offers: [
-      { storeId: "othaim", price: 18.95, available: true },
-      { storeId: "panda", price: 19.5, available: true },
-      { storeId: "carrefour", price: 20.95, available: true },
-      { storeId: "tamimi", price: 17.95, available: true },
+      {
+        storeId: "panda",
+        price: 19.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 20.95,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 17.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -283,10 +534,26 @@ export const products = [
     image: "./assets/products/milk.avif",
     tags: ["حليب", "لبن", "ألبان", "milk", "dairy"],
     offers: [
-      { storeId: "othaim", price: 6.25, available: true },
-      { storeId: "panda", price: 6.5, available: true },
-      { storeId: "carrefour", price: 6.95, available: true },
-      { storeId: "tamimi", price: 6.25, available: true },
+      {
+        storeId: "panda",
+        price: 6.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 6.95,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 6.25,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -299,10 +566,26 @@ export const products = [
     image: "./assets/products/bread.avif",
     tags: ["خبز", "توست", "أسمر", "اسمر", "bread", "toast"],
     offers: [
-      { storeId: "othaim", price: 5.95, available: true },
-      { storeId: "panda", price: 5.5, available: true },
-      { storeId: "carrefour", price: 6.25, available: false },
-      { storeId: "tamimi", price: 5.75, available: true },
+      {
+        storeId: "panda",
+        price: 5.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 6.25,
+        available: false,
+      },
+      {
+        storeId: "tamimi",
+        price: 5.75,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -315,10 +598,26 @@ export const products = [
     image: "./assets/products/olive-oil.avif",
     tags: ["زيت", "زيتون", "بكر", "olive", "oil"],
     offers: [
-      { storeId: "othaim", price: 24.95, available: true },
-      { storeId: "panda", price: 26.5, available: true },
-      { storeId: "carrefour", price: 27.95, available: true },
-      { storeId: "tamimi", price: 23.95, available: true },
+      {
+        storeId: "panda",
+        price: 26.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 27.95,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 23.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -331,10 +630,26 @@ export const products = [
     image: "./assets/products/pasta.avif",
     tags: ["مكرونة", "معكرونة", "مكرونه", "pasta", "penne"],
     offers: [
-      { storeId: "othaim", price: 4.5, available: true },
-      { storeId: "panda", price: 4.95, available: true },
-      { storeId: "carrefour", price: 5.25, available: true },
-      { storeId: "tamimi", price: 4.75, available: true },
+      {
+        storeId: "panda",
+        price: 4.95,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 5.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 4.75,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -347,10 +662,26 @@ export const products = [
     image: "./assets/products/water.avif",
     tags: ["مياه", "ماء", "water"],
     offers: [
-      { storeId: "othaim", price: 7.95, available: true },
-      { storeId: "panda", price: 8.5, available: true },
-      { storeId: "carrefour", price: 9.25, available: true },
-      { storeId: "tamimi", price: 7.5, available: true },
+      {
+        storeId: "panda",
+        price: 8.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 9.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 7.5,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -363,10 +694,26 @@ export const products = [
     image: "./assets/products/coffee.avif",
     tags: ["قهوة", "قهوه", "بن", "coffee", "arabic coffee"],
     offers: [
-      { storeId: "othaim", price: 19.95, available: true },
-      { storeId: "panda", price: 18.5, available: true },
-      { storeId: "carrefour", price: 21.25, available: true },
-      { storeId: "tamimi", price: 20.5, available: true },
+      {
+        storeId: "panda",
+        price: 18.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 21.25,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 20.5,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -379,10 +726,26 @@ export const products = [
     image: "./assets/products/tea.avif",
     tags: ["شاي", "tea", "black tea"],
     offers: [
-      { storeId: "othaim", price: 13.95, available: true },
-      { storeId: "panda", price: 14.5, available: true },
-      { storeId: "carrefour", price: 15.25, available: false },
-      { storeId: "tamimi", price: 13.5, available: true },
+      {
+        storeId: "panda",
+        price: 14.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 15.25,
+        available: false,
+      },
+      {
+        storeId: "tamimi",
+        price: 13.5,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -395,10 +758,26 @@ export const products = [
     image: "./assets/products/headphones.avif",
     tags: ["سماعة", "سماعات", "بلوتوث", "headphones", "bluetooth"],
     offers: [
-      { storeId: "othaim", price: 129, available: true },
-      { storeId: "panda", price: 119, available: true },
-      { storeId: "carrefour", price: 139, available: true },
-      { storeId: "tamimi", price: 125, available: true },
+      {
+        storeId: "panda",
+        price: 119,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 139,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 125,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -411,10 +790,26 @@ export const products = [
     image: "./assets/products/laptop.avif",
     tags: ["لابتوب", "حاسب", "كمبيوتر", "laptop", "computer"],
     offers: [
-      { storeId: "othaim", price: 2499, available: true },
-      { storeId: "panda", price: 2399, available: true },
-      { storeId: "carrefour", price: 2599, available: true },
-      { storeId: "tamimi", price: 2449, available: false },
+      {
+        storeId: "panda",
+        price: 2399,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 2599,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 2449,
+        available: false,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -427,10 +822,26 @@ export const products = [
     image: "./assets/products/phone.avif",
     tags: ["هاتف", "جوال", "موبايل", "phone", "smartphone"],
     offers: [
-      { storeId: "othaim", price: 899, available: true },
-      { storeId: "panda", price: 949, available: true },
-      { storeId: "carrefour", price: 879, available: true },
-      { storeId: "tamimi", price: 925, available: true },
+      {
+        storeId: "panda",
+        price: 949,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 879,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 925,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -443,10 +854,26 @@ export const products = [
     image: "./assets/products/powerbank.avif",
     tags: ["شاحن", "باور بنك", "شحن", "powerbank", "power bank", "charger"],
     offers: [
-      { storeId: "othaim", price: 59, available: true },
-      { storeId: "panda", price: 55, available: true },
-      { storeId: "carrefour", price: 65, available: false },
-      { storeId: "tamimi", price: 57, available: true },
+      {
+        storeId: "panda",
+        price: 55,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 65,
+        available: false,
+      },
+      {
+        storeId: "tamimi",
+        price: 57,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -459,10 +886,26 @@ export const products = [
     image: "./assets/products/detergent.avif",
     tags: ["غسيل", "منظف", "ملابس", "detergent", "laundry"],
     offers: [
-      { storeId: "othaim", price: 22.95, available: true },
-      { storeId: "panda", price: 24.5, available: true },
-      { storeId: "carrefour", price: 25.95, available: true },
-      { storeId: "tamimi", price: 21.95, available: true },
+      {
+        storeId: "panda",
+        price: 24.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 25.95,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 21.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -475,10 +918,26 @@ export const products = [
     image: "./assets/products/tissues.avif",
     tags: ["مناديل", "ورق", "tissues", "tissue"],
     offers: [
-      { storeId: "othaim", price: 14.95, available: true },
-      { storeId: "panda", price: 13.95, available: true },
-      { storeId: "carrefour", price: 15.5, available: true },
-      { storeId: "tamimi", price: 14.5, available: true },
+      {
+        storeId: "panda",
+        price: 13.95,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 15.5,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 14.5,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   {
@@ -491,11 +950,28 @@ export const products = [
     image: "./assets/products/dish-soap.jpg",
     tags: ["صحون", "مواعين", "منظف", "صابون", "dish", "soap"],
     offers: [
-      { storeId: "othaim", price: 7.95, available: true },
-      { storeId: "panda", price: 8.5, available: true },
-      { storeId: "carrefour", price: 8.95, available: true },
-      { storeId: "tamimi", price: 7.95, available: true },
+      {
+        storeId: "panda",
+        price: 8.5,
+        available: true,
+      },
+      {
+        storeId: "carrefour",
+        price: 8.95,
+        available: true,
+      },
+      {
+        storeId: "tamimi",
+        price: 7.95,
+        available: true,
+      },
+      {
+        storeId: "amazon",
+        price: null,
+        available: null,
+      },
     ],
   },
   ...extraProducts,
+  ...moreProducts,
 ];

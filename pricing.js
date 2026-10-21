@@ -1,5 +1,5 @@
 const toCents = (value) => Math.round((value + Number.EPSILON) * 100);
-const money = (cents) => cents / 100;
+const money = (cents) => (cents === null ? null : cents / 100);
 const isPrice = (value) =>
   typeof value === "number" && Number.isFinite(value) && value >= 0;
 
@@ -16,6 +16,15 @@ export function availableOffers(product, storeIds = []) {
       (a, b) =>
         a.price - b.price || String(a.storeId).localeCompare(String(b.storeId)),
     );
+}
+
+export function unverifiedOffers(product, storeIds = []) {
+  const selected = new Set(storeIds);
+  return (product.offers ?? []).filter(
+    (offer) =>
+      offer.available === null &&
+      (selected.size === 0 || selected.has(offer.storeId)),
+  );
 }
 
 export function bestOffer(product, storeIds = []) {
@@ -59,22 +68,25 @@ export function filterProducts(
     if (category !== "all" && product.category !== category) return false;
     if (favoritesOnly && !favorites.has(product.id)) return false;
     const offer = bestOffer(product, storeIds);
-    if (!offer) return false;
-    if (isPrice(maxPrice) && offer.price > maxPrice) return false;
+    if (!offer && !unverifiedOffers(product, storeIds).length) return false;
+    if (isPrice(maxPrice) && (!offer || offer.price > maxPrice)) return false;
     const searchable = normalizeSearch(
       [product.name, product.unit, ...(product.tags ?? [])].join(" "),
     );
     return terms.every((term) => searchable.includes(term));
   });
 
-  if (sort === "price-asc")
-    result.sort(
-      (a, b) => bestOffer(a, storeIds).price - bestOffer(b, storeIds).price,
-    );
-  if (sort === "price-desc")
-    result.sort(
-      (a, b) => bestOffer(b, storeIds).price - bestOffer(a, storeIds).price,
-    );
+  if (sort === "price-asc" || sort === "price-desc") {
+    result.sort((a, b) => {
+      const first = bestOffer(a, storeIds);
+      const second = bestOffer(b, storeIds);
+      if (!first) return second ? 1 : 0;
+      if (!second) return -1;
+      return sort === "price-asc"
+        ? first.price - second.price
+        : second.price - first.price;
+    });
+  }
   if (sort === "savings")
     result.sort((a, b) => savingFor(b, storeIds) - savingFor(a, storeIds));
   return result;
@@ -87,7 +99,7 @@ function deliveryCents(store, subtotal, includeDelivery, hasItems) {
     subtotal >= toCents(store.freeDeliveryFrom)
   )
     return 0;
-  return isPrice(store.deliveryFee) ? toCents(store.deliveryFee) : 0;
+  return isPrice(store.deliveryFee) ? toCents(store.deliveryFee) : null;
 }
 
 export function basketSummary(
@@ -135,45 +147,64 @@ export function basketSummary(
       storeId,
       subtotal: money(subtotal),
       delivery: money(delivery),
-      total: money(subtotal + delivery),
+      total: delivery === null ? null : money(subtotal + delivery),
+      shippingKnown: delivery !== null,
     };
   });
   const splitSubtotal = [...splitSubtotals.values()].reduce(
     (sum, value) => sum + value,
     0,
   );
-  const splitDelivery = splitByStore.reduce(
-    (sum, entry) => sum + toCents(entry.delivery),
-    0,
+  const splitHasUnverifiedPrices = items.some(
+    (item) =>
+      !item.bestOffer &&
+      unverifiedOffers(item.product).some((offer) =>
+        storeById.has(offer.storeId),
+      ),
   );
-  const splitTotal = splitSubtotal + splitDelivery;
+  const splitShippingKnown =
+    !splitHasUnverifiedPrices &&
+    splitByStore.every((entry) => entry.shippingKnown);
+  const splitDelivery = splitShippingKnown
+    ? splitByStore.reduce((sum, entry) => sum + toCents(entry.delivery), 0)
+    : null;
+  const splitTotal =
+    splitDelivery === null ? null : splitSubtotal + splitDelivery;
 
   const byStore = stores.map((store) => {
     let subtotal = 0;
     let found = 0;
     const missingProductIds = [];
+    const unverifiedProductIds = [];
     for (const item of items) {
       const offer = bestOffer(item.product, [store.id]);
       if (!offer) {
-        missingProductIds.push(item.product.id);
+        if (unverifiedOffers(item.product, [store.id]).length)
+          unverifiedProductIds.push(item.product.id);
+        else missingProductIds.push(item.product.id);
         continue;
       }
       found += 1;
       subtotal += toCents(offer.price) * item.quantity;
     }
-    const delivery = deliveryCents(store, subtotal, includeDelivery, found > 0);
+    const hasUnverifiedPrices = unverifiedProductIds.length > 0;
+    const delivery = hasUnverifiedPrices
+      ? null
+      : deliveryCents(store, subtotal, includeDelivery, found > 0);
     return {
       store,
-      subtotal: money(subtotal),
+      subtotal: !found && hasUnverifiedPrices ? null : money(subtotal),
       delivery: money(delivery),
-      total: money(subtotal + delivery),
+      total: delivery === null ? null : money(subtotal + delivery),
       missingProductIds,
-      complete: missingProductIds.length === 0,
+      unverifiedProductIds,
+      shippingKnown: delivery !== null,
+      complete: missingProductIds.length === 0 && !hasUnverifiedPrices,
     };
   });
   const completeStores = items.length
     ? byStore
-        .filter((entry) => entry.complete)
+        .filter((entry) => entry.complete && entry.total !== null)
         .sort(
           (a, b) => a.total - b.total || a.store.id.localeCompare(b.store.id),
         )
@@ -190,9 +221,11 @@ export function basketSummary(
       subtotal: money(splitSubtotal),
       total: money(splitTotal),
       delivery: money(splitDelivery),
-      totalSavings: splitComplete
-        ? money(Math.max(0, highestCompleteTotal - splitTotal))
-        : 0,
+      shippingKnown: splitShippingKnown,
+      totalSavings:
+        splitComplete && splitTotal !== null
+          ? money(Math.max(0, highestCompleteTotal - splitTotal))
+          : 0,
       byStore: splitByStore,
     },
     byStore,

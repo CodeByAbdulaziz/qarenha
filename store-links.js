@@ -1,4 +1,5 @@
-import { photoCredits } from "./photo-credits.js?v=20261020";
+import { photoCredits } from "./photo-credits.js?v=20261021";
+import { amazonPages, amazonSearchTerms } from "./amazon-links.js?v=20261021";
 
 // These links are for browsing stores. They are not sources for the demo prices.
 export const productPages = {
@@ -53,7 +54,7 @@ export const productPages = {
 };
 
 const storeDomains = {
-  othaim: "othaimmarkets.com",
+  amazon: "amazon.sa",
   panda: "panda.sa",
   carrefour: "carrefourksa.com",
   tamimi: "shop.tamimimarkets.com",
@@ -80,11 +81,22 @@ export function storeLink(product, storeId) {
 
   const directUrl =
     productPages[product.id]?.[storeId] ||
+    (storeId === "amazon" ? amazonPages[product.id] : null) ||
     (storeId === "carrefour"
       ? photoCredits.find((photo) => photo.id === product.id)?.sourcePage
       : null);
   if (directUrl) {
     return { href: directUrl, kind: "product", label: "صفحة المنتج" };
+  }
+
+  if (storeId === "amazon") {
+    const url = new URL("https://www.amazon.sa/s");
+    const query =
+      amazonSearchTerms[product.id] ||
+      photoCredits.find((photo) => photo.id === product.id)?.title ||
+      product.name;
+    url.searchParams.set("k", query);
+    return { href: url.href, kind: "search", label: "ابحث في أمازون" };
   }
 
   if (storeId === "panda") {
@@ -108,8 +120,5 @@ export function storeLink(product, storeId) {
     return { href: url.href, kind: "search", label: "ابحث في المتجر" };
   }
 
-  // Some stores do not expose a public product-search page.
-  const url = new URL("https://www.google.com/search");
-  url.searchParams.set("q", `site:${domain} ${product.name}`);
-  return { href: url.href, kind: "web-search", label: "ابحث عن المنتج" };
+  return null;
 }

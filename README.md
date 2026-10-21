@@ -4,7 +4,7 @@ An Arabic website for comparing product prices between stores. Prices are in Sau
 
 ## Data
 
-This is a working demo. The store names are Al Othaim, Panda, Carrefour, and Tamimi. Prices, stock, delivery fees, and free-delivery thresholds are sample data and are not official store offers. They are labeled as demo data on the website. The site does not fetch live prices or take payments.
+This is a working demo. The stores are Panda, Carrefour, Tamimi, and Amazon Saudi Arabia. Panda, Carrefour, and Tamimi prices, stock, delivery fees, and free-delivery thresholds are sample data and are not official store offers. They are labeled as demo data on the website. Amazon prices, stock, and delivery are unverified and stored as `null`; its links help visitors check the retailer. Amazon is excluded from the cheapest-price and basket-total rankings. Unknown means unverified, not out of stock or free. The site does not fetch live prices or take payments.
 
 ## Features
 
@@ -15,7 +15,7 @@ This is a working demo. The store names are Al Othaim, Panda, Carrefour, and Tam
 - Share product and shopping-list links.
 - Open a store product page or search for any product at each store.
 - Print the shopping list.
-- Browse 52 products in 12 categories.
+- Browse 68 products in 12 categories.
 - Read privacy, terms, price notices, and reporting details on `legal.html`.
 
 ## Run
@@ -38,7 +38,7 @@ The Arabic font is IBM Plex Sans Arabic, from Google Fonts, licensed under the S
 
 ## Product photos
 
-Product photos come from Carrefour Saudi Arabia product pages. The image files are saved in `assets/products/` so photos load from this site. They illustrate product types. The brand, model, or package shown is not verified across the other stores. Source product pages and original image URLs are listed in `photo-credits.js`, `extra-products.js`, and the website's photo sources panel. Image rights belong to their owners. Photos are not sources for the demo prices.
+Product photos come from Carrefour Saudi Arabia product pages. The image files are saved in `assets/products/` so photos load from this site. They illustrate product types. The brand, model, or package shown is not verified across the other stores. Source product pages and original image URLs are listed in `photo-credits.js`, `extra-products.js`, `more-products.js`, and the website's photo sources panel. Image rights belong to their owners. Photos are not sources for the demo prices.
 
 ## Where the code is
 
@@ -48,8 +48,10 @@ Product photos come from Carrefour Saudi Arabia product pages. The image files a
 - `pricing.js`: price comparison and delivery calculations.
 - `catalog.js`: products, store names, and sample offers.
 - `extra-products.js`: added categories, products, and photo sources.
+- `more-products.js`: more food, drink, and household products with Carrefour photo sources.
 - `photo-credits.js`: Carrefour photo sources and original image URLs.
 - `store-links.js`: product pages and store search links.
+- `amazon-links.js`: checked Amazon product links and package-aware search terms.
 - `tests/pricing.test.mjs`: tests for the comparison rules.
 - `legal.html`, `legal.css`, and `legal.js`: privacy, terms, price warnings, responsibility limits, and error reporting.
 
@@ -63,7 +65,7 @@ The price notice explains changes by date, location, store, package, promotions,
 
 ## Store links
 
-Every product has a link for each store. A saved product link opens the retailer's product page. Other links search for the product inside the store. Al Othaim uses a Google search limited to its official website because a public product search was not found. The button explains the destination. Links open in a new tab.
+Every product has a link for each store. A saved product link opens the retailer's product page. Other links search for the product inside the store. Amazon search queries include the product type and package; results may include different sizes, multipacks, brands, or sellers. Visitors must check the exact item and checkout costs. The button explains the destination. Links open in a new tab.
 
 These links are for browsing, not sources for the sample prices. Brands, sizes, stock, and prices can differ. Check the retailer before buying.
 
@@ -74,7 +76,7 @@ The live website is at https://codebyabdulaziz.github.io/qarenha/.
 
 - Change page text and layout in `index.html`.
 - Change colors, spacing, and mobile layout in `styles.css`.
-- Change products, units, and demo prices in `catalog.js` and `extra-products.js`.
+- Change products, units, and demo prices in `catalog.js`, `extra-products.js`, and `more-products.js`.
 - Change store links in `store-links.js`.
 - Change website behavior in `app.js`.
 
@@ -89,4 +91,4 @@ python -m http.server 8080
 
 After editing, commit and push your changes to `main` to update the live website.
 
-Scripts, styles, and module imports use a version in their URLs, such as `?v=20261020`. Increase this version across the changed files and their imports when publishing a new release. This lets returning visitors load the new files instead of an older cached copy.
+Scripts, styles, and module imports use a version in their URLs, such as `?v=20261021`. Increase this version across the changed files and their imports when publishing a new release. This lets returning visitors load the new files instead of an older cached copy.

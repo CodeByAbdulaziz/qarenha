@@ -1625,6 +1625,10 @@ dialog::backdrop {
   background: #fafbf8;
 }
 
+.offer-row.unverified {
+  background: #f5f7f3;
+}
+
 .offer-row.unavailable .offer-price {
   opacity: 0.6;
 }
