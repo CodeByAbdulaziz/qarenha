@@ -92,3 +92,11 @@ python -m http.server 8080
 After editing, commit and push your changes to `main` to update the live website.
 
 Scripts, styles, and module imports use a version in their URLs, such as `?v=20261021`. Increase this version across the changed files and their imports when publishing a new release. This lets returning visitors load the new files instead of an older cached copy.
+
+## Search engines
+
+`sitemap.xml` lists the main website and `legal.html` using their public canonical URLs. Product query links and page sections use the same main page, so they are not separate sitemap entries. Keep each `lastmod` date tied to a real page change.
+
+The domain's `robots.txt` must be served at `https://codebyabdulaziz.github.io/robots.txt`. It is maintained in the separate `CodeByAbdulaziz/codebyabdulaziz.github.io` portfolio repository and points to this project's sitemap. A `robots.txt` inside `/qarenha/` would not apply to the domain.
+
+Google Search Console ownership verification, sitemap submission, and requests to index pages are separate manual steps. Check Search Console to confirm their current status. Publishing these files does not confirm ownership verification or indexing.

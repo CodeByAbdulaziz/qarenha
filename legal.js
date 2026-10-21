@@ -26,7 +26,7 @@ const requestedProduct = new URLSearchParams(location.search).get("product");
 const productId = products.some((product) => product.id === requestedProduct)
   ? requestedProduct
   : null;
-const productUrl = new URL("./index.html", location.href);
+const productUrl = new URL("./", location.href);
 if (productId) productUrl.searchParams.set("product", productId);
 const productContext = productId
   ? [`معرّف المنتج: ${productId}`, `صفحة المنتج: ${productUrl.href}`, ""]
