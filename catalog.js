@@ -2,6 +2,8 @@
 // Amazon prices, stock and delivery have not been verified.
 import { extraCategories, extraProducts } from "./extra-products.js?v=20261021";
 import { moreProducts } from "./more-products.js?v=20261021";
+import { foodProducts } from "./food-products.js?v=20261021b";
+import { homeProducts } from "./home-products.js?v=20261021b";
 
 export const DATA_MODE = "demo";
 
@@ -974,4 +976,6 @@ export const products = [
   },
   ...extraProducts,
   ...moreProducts,
+  ...foodProducts,
+  ...homeProducts,
 ];

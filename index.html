@@ -34,8 +34,8 @@
       type="font/ttf"
       crossorigin
     />
-    <link rel="stylesheet" href="./styles.css?v=20261021" />
-    <script type="module" src="./app.js?v=20261021"></script>
+    <link rel="stylesheet" href="./styles.css?v=20261021b" />
+    <script type="module" src="./app.js?v=20261021b"></script>
   </head>
   <body>
     <a class="skip-link" href="#catalog">انتقل إلى المنتجات</a>
@@ -84,7 +84,13 @@
             من مقاضي البيت إلى أجهزتك الجديدة.<br />قارن أسعار المنتج بين
             المتاجر، وخلّ الفرق بجيبك.
           </p>
-          <form id="search-form" class="search-form" role="search">
+          <form
+            id="search-form"
+            class="search-form"
+            role="search"
+            aria-label="البحث من الصفحة الرئيسية"
+            data-search-form
+          >
             <svg class="icon"><use href="#i-search" /></svg
             ><label class="sr-only" for="search-input">ابحث عن منتج</label
             ><input
@@ -92,8 +98,12 @@
               type="search"
               placeholder="وش تدور عليه اليوم؟"
               autocomplete="off"
+              maxlength="200"
+              enterkeyhint="search"
+              aria-controls="product-grid"
+              data-product-search
             /><button class="button button-primary" type="submit">
-              قارن السعر<svg class="icon"><use href="#i-arrow" /></svg>
+              بحث<svg class="icon"><use href="#i-search" /></svg>
             </button>
           </form>
           <div class="popular-search">
@@ -183,6 +193,29 @@
               </select>
             </div>
           </div>
+          <form
+            id="catalog-search-form"
+            class="search-form catalog-search"
+            role="search"
+            aria-label="البحث في قائمة المنتجات"
+            data-search-form
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-search" /></svg>
+            <label class="sr-only" for="catalog-search-input"
+              >ابحث في المنتجات</label
+            >
+            <input
+              id="catalog-search-input"
+              type="search"
+              placeholder="ابحث عن منتجك، مثل حليب أو شامبو"
+              autocomplete="off"
+              maxlength="200"
+              enterkeyhint="search"
+              aria-controls="product-grid"
+              data-product-search
+            />
+            <button class="button button-primary" type="submit">بحث</button>
+          </form>
           <div class="filter-bar">
             <div class="store-filter">
               <span>المتاجر:</span>

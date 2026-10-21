@@ -1,4 +1,4 @@
-import { products } from "./catalog.js?v=20261021";
+import { products } from "./catalog.js?v=20261021b";
 
 const storageKey = "qarenha-v1";
 const clearButton = document.querySelector("#clear-local-data");

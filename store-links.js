@@ -1,4 +1,4 @@
-import { photoCredits } from "./photo-credits.js?v=20261021";
+import { photoCredits } from "./photo-credits.js?v=20261021b";
 import { amazonPages, amazonSearchTerms } from "./amazon-links.js?v=20261021";
 
 // These links are for browsing stores. They are not sources for the demo prices.

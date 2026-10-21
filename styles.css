@@ -516,6 +516,16 @@ b {
   min-height: 46px;
   padding-inline: 16px;
   white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.search-form:focus-within {
+  border-color: var(--green);
+}
+
+.catalog-search {
+  max-width: 680px;
+  margin: 0 0 20px;
 }
 
 .search-form .button .icon {

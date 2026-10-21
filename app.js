@@ -1,6 +1,6 @@
-import { products, categories, stores } from "./catalog.js?v=20261021";
-import { photoCredits } from "./photo-credits.js?v=20261021";
-import { storeLink } from "./store-links.js?v=20261021";
+import { products, categories, stores } from "./catalog.js?v=20261021b";
+import { photoCredits } from "./photo-credits.js?v=20261021b";
+import { storeLink } from "./store-links.js?v=20261021b";
 import {
   availableOffers,
   unverifiedOffers,
@@ -226,6 +226,14 @@ function renderCatalog() {
   updateCounts();
 }
 
+function updateSearch(value, activeInput = null) {
+  state.query = value.trim().slice(0, 200);
+  state.visible = 12;
+  document.querySelectorAll("[data-product-search]").forEach((input) => {
+    if (input !== activeInput) input.value = state.query;
+  });
+}
+
 function resetFilters() {
   Object.assign(state, {
     query: "",
@@ -236,7 +244,7 @@ function resetFilters() {
     favoritesOnly: false,
     visible: 12,
   });
-  $("#search-input").value = "";
+  updateSearch("");
   $("#max-price").value = "";
   $("#sort-select").value = "featured";
   renderStores();
@@ -462,17 +470,14 @@ document.addEventListener("click", (event) => {
     $("#catalog").scrollIntoView({ behavior: "smooth" });
   }
   if (button.dataset.search) {
-    state.query = button.dataset.search;
+    updateSearch(button.dataset.search);
     state.category = "all";
-    state.visible = 12;
-    $("#search-input").value = state.query;
     renderCatalog();
     $("#catalog").scrollIntoView({ behavior: "smooth" });
   }
   if (button.dataset.clear) {
     if (button.dataset.clear === "query") {
-      state.query = "";
-      $("#search-input").value = "";
+      updateSearch("");
     }
     if (button.dataset.clear === "category") state.category = "all";
     if (button.dataset.clear === "favorites") state.favoritesOnly = false;
@@ -512,17 +517,19 @@ document.addEventListener("click", (event) => {
   if (button.dataset.action === "print") window.print();
 });
 
-$("#search-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  state.query = $("#search-input").value.trim().slice(0, 200);
-  state.visible = 12;
-  renderCatalog();
-  $("#catalog").scrollIntoView({ behavior: "smooth" });
+document.querySelectorAll("[data-search-form]").forEach((form) => {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    updateSearch(form.querySelector("[data-product-search]").value);
+    renderCatalog();
+    $("#catalog").scrollIntoView({ behavior: "smooth" });
+  });
 });
-$("#search-input").addEventListener("input", () => {
-  state.query = $("#search-input").value.trim().slice(0, 200);
-  state.visible = 12;
-  renderCatalog();
+document.querySelectorAll("[data-product-search]").forEach((input) => {
+  input.addEventListener("input", () => {
+    updateSearch(input.value, input);
+    renderCatalog();
+  });
 });
 $("#sort-select").addEventListener("change", (event) => {
   state.sort = event.target.value;

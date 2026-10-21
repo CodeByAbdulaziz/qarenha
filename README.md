@@ -8,14 +8,15 @@ This is a working demo. The stores are Panda, Carrefour, Tamimi, and Amazon Saud
 
 ## Features
 
-- Search in Arabic or English and filter by category, store, and budget.
+- Search in Arabic or English from the homepage or the product list, using the search button or Enter.
+- Filter by category, store, and budget.
 - Compare the same product and package across stores.
 - Save favorites and a shopping list in the current browser.
 - Compare a full shopping list across stores, with optional delivery costs.
 - Share product and shopping-list links.
 - Open a store product page or search for any product at each store.
 - Print the shopping list.
-- Browse 68 products in 12 categories.
+- Browse 100 products in 12 categories.
 - Read privacy, terms, price notices, and reporting details on `legal.html`.
 
 ## Run
@@ -38,7 +39,7 @@ The Arabic font is IBM Plex Sans Arabic, from Google Fonts, licensed under the S
 
 ## Product photos
 
-Product photos come from Carrefour Saudi Arabia product pages. The image files are saved in `assets/products/` so photos load from this site. They illustrate product types. The brand, model, or package shown is not verified across the other stores. Source product pages and original image URLs are listed in `photo-credits.js`, `extra-products.js`, `more-products.js`, and the website's photo sources panel. Image rights belong to their owners. Photos are not sources for the demo prices.
+Product photos come from Carrefour Saudi Arabia product pages. The image files are saved in `assets/products/` so photos load from this site. They illustrate product types. The brand, model, or package shown is not verified across the other stores. Source product pages and original image URLs are listed in `photo-credits.js`, the product files, and the website's photo sources panel. Image rights belong to their owners. Photos are not sources for the demo prices.
 
 ## Where the code is
 
@@ -49,6 +50,8 @@ Product photos come from Carrefour Saudi Arabia product pages. The image files a
 - `catalog.js`: products, store names, and sample offers.
 - `extra-products.js`: added categories, products, and photo sources.
 - `more-products.js`: more food, drink, and household products with Carrefour photo sources.
+- `food-products.js`: more fruit and vegetables with Carrefour photo sources.
+- `home-products.js`: more household, care, baby, and electronic products with Carrefour photo sources.
 - `photo-credits.js`: Carrefour photo sources and original image URLs.
 - `store-links.js`: product pages and store search links.
 - `amazon-links.js`: checked Amazon product links and package-aware search terms.
@@ -76,7 +79,7 @@ The live website is at https://codebyabdulaziz.github.io/qarenha/.
 
 - Change page text and layout in `index.html`.
 - Change colors, spacing, and mobile layout in `styles.css`.
-- Change products, units, and demo prices in `catalog.js`, `extra-products.js`, and `more-products.js`.
+- Change products, units, and demo prices in `catalog.js`, `extra-products.js`, `more-products.js`, `food-products.js`, and `home-products.js`.
 - Change store links in `store-links.js`.
 - Change website behavior in `app.js`.
 
