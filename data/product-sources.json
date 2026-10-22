@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "maxAgeMinutes": 30,
+  "sources": [
+    {
+      "productId": "phone",
+      "storeId": "extra",
+      "url": "https://www.extra.com/en-sa/mobiles-tablets/mobiles/smartphone/samsung-galaxy-a16-4g-128gb-4gb-ram-black/p/100389560",
+      "expected": {
+        "sku": "100389560",
+        "model": "SM-A165FZKDMEA",
+        "name": "Samsung Galaxy A16, 4G, 128GB, 4GB RAM, Black"
+      },
+      "matchEvidence": "Samsung Galaxy A16 4G, 128 GB storage, 4 GB RAM, black. Exact Saudi eXtra SKU and manufacturer model published in Product JSON-LD; variant checked in live UI."
+    },
+    {
+      "productId": "wireless-mouse",
+      "storeId": "extra",
+      "url": "https://www.extra.com/en-sa/computer/computers-accessories/mouse/logitech-m170-wireless-mouse-grey/p/00187809",
+      "expected": {
+        "sku": "00187809",
+        "model": "910-004642",
+        "name": "LOGITECH M170 Wireless Mouse Grey"
+      },
+      "matchEvidence": "Logitech M170 wireless mouse, grey. Exact Saudi eXtra SKU and manufacturer model published in Product JSON-LD; variant checked in live UI. Page says out of stock despite JSON-LD InStock, so the collector must not rank it as available."
+    }
+  ]
+}

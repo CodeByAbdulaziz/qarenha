@@ -8,6 +8,7 @@ import {
   normalizeSearch,
   filterProducts,
   basketSummary,
+  hasCurrentPrice,
 } from "../pricing.js";
 
 const stores = [
@@ -15,11 +16,21 @@ const stores = [
   { id: "b", name: "Store B", deliveryFee: 8, freeDeliveryFrom: 80 },
   { id: "c", name: "Store C", deliveryFee: 6, freeDeliveryFrom: 60 },
 ];
-const offer = (storeId, price, available = true) => ({
-  storeId,
-  price,
-  available,
-});
+const fixtureCheckedAt = Date.now() - 60_000;
+const offer = (storeId, price, available = true) => {
+  const checkedAt = fixtureCheckedAt;
+  return {
+    storeId,
+    price,
+    available,
+    currency: "SAR",
+    status: "verified",
+    sourceType: "retailer-page",
+    sourceUrl: "https://example.com/product",
+    verifiedAt: new Date(checkedAt).toISOString(),
+    validUntil: new Date(checkedAt + 30 * 60_000).toISOString(),
+  };
+};
 const product = (id, name, offers, extra = {}) => ({
   id,
   name,
@@ -98,7 +109,11 @@ test("product filters combine Arabic search, category, favorites, stock and sele
     ),
     ["apple"],
   );
-  assert.deepEqual(filterProducts(products, { storeIds: ["c"] }), []);
+  assert.deepEqual(
+    filterProducts(products, { storeIds: ["c"] }).map((item) => item.id),
+    ["rice"],
+  );
+  assert.equal(bestOffer(products[0], ["c"]), null);
   assert.deepEqual(
     filterProducts(products, { query: "mobile" }).map((item) => item.id),
     ["phone"],
@@ -164,7 +179,9 @@ test("delivery fees stop exactly at the free-delivery threshold", () => {
   assert.equal(at.split.total, 100);
   assert.equal(at.split.delivery, 0);
   assert.equal(at.byStore[0].delivery, 0);
-  assert.equal(at.byStore[1].delivery, 0);
+  assert.equal(at.byStore[1].delivery, null);
+  assert.equal(at.byStore[1].total, null);
+  assert.equal(at.byStore[1].complete, false);
 });
 
 test("a merchant missing an item cannot be the best complete store", () => {
@@ -241,7 +258,7 @@ test("unknown-store browsing keeps matching products but cannot prove a budget",
   ];
   assert.deepEqual(
     filterProducts(items, { storeIds: ["amazon"] }).map((item) => item.id),
-    ["rice", "soap"],
+    ["rice", "soap", "unavailable"],
   );
   assert.deepEqual(
     filterProducts(items, {

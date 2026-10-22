@@ -1,6 +1,4 @@
-// Product names and pack sizes follow the linked Carrefour Saudi Arabia listings.
-// Panda, Carrefour and Tamimi prices and stock are fictional demo data, not live offers.
-// Amazon prices and availability are unknown until a matching offer is verified.
+// Prices and stock stay unknown until a matching current source is verified.
 
 export const moreProducts = [
   {
@@ -15,18 +13,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 4.45,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 4.95,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 4.65,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -47,18 +45,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 5.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 5.95,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 5.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -79,18 +77,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 17.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 18.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 17.95,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -111,18 +109,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 4.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 4.6,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 4.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -143,18 +141,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 9.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 10.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 9.95,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -175,18 +173,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 6.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 7.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 6.95,
-        available: false,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -207,18 +205,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 1.65,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 1.85,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 1.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -239,18 +237,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 8.5,
-        available: false,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 9.1,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 8.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -276,18 +274,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 17.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 18.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 18.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -308,18 +306,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 7.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 8.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 7.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -345,18 +343,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 16.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 18.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 17.5,
-        available: false,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -377,18 +375,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 11.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 12.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 12.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -414,18 +412,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 9.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 10.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 9.95,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -451,18 +449,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 39.5,
-        available: false,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 41.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 40.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -483,18 +481,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 8.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 9.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 8.95,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",
@@ -515,18 +513,18 @@ export const moreProducts = [
     offers: [
       {
         storeId: "panda",
-        price: 6.5,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "carrefour",
-        price: 7.25,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "tamimi",
-        price: 6.75,
-        available: true,
+        price: null,
+        available: null,
       },
       {
         storeId: "amazon",

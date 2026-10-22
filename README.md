@@ -1,105 +1,86 @@
-# قارنها
+# Qarenha
 
-An Arabic website for comparing product prices between stores. Prices are in Saudi riyals.
+An Arabic product comparison website for Saudi Arabia. Prices are in Saudi riyals.
 
-## Data
+## Prices
 
-This is a working demo. The stores are Panda, Carrefour, Tamimi, and Amazon Saudi Arabia. Panda, Carrefour, and Tamimi prices, stock, delivery fees, and free-delivery thresholds are sample data and are not official store offers. They are labeled as demo data on the website. Amazon prices, stock, and delivery are unverified and stored as `null`; its links help visitors check the retailer. Amazon is excluded from the cheapest-price and basket-total rankings. Unknown means unverified, not out of stock or free. The site does not fetch live prices or take payments.
+There are no sample prices in the catalogue. A product starts with an unknown price and stock status. A number appears only after a current source has passed the product, model, currency, and expiry checks.
+
+The current automatic source is a small set of matching **eXtra Saudi Arabia** product pages. This reads public product data; it is not an official eXtra API or a partnership. The exact approved pages and match evidence are in `data/product-sources.json`.
+
+Panda, Carrefour, Tamimi, Amazon Saudi Arabia, and Jarir are navigation links only. We do not collect their prices without an approved integration. A product photo or a store link is not proof of a current offer.
+
+Each price has a source link and a check time. Prices expire after at most 30 minutes. A failed check replaces the previous price with `null`; an expired price is hidden. Stock must match the page's product record. Conflicting or unknown stock cannot win the cheapest available offer ranking. Unknown shipping is never treated as free.
+
+Prices may change between checks or vary by city, seller, membership, and checkout costs. The store's final checkout price is the reference. There is no promise of instant or complete coverage.
 
 ## Features
 
-- Search in Arabic or English from the homepage or the product list, using the search button or Enter.
-- Filter by category, store, and budget.
-- Compare the same product and package across stores.
-- Save favorites and a shopping list in the current browser.
-- Compare a full shopping list across stores, with optional delivery costs.
-- Share product and shopping-list links.
-- Open a store product page or search for any product at each store.
-- Print the shopping list.
-- Browse 100 products in 12 categories.
-- Read privacy, terms, price notices, and reporting details on `legal.html`.
+- 112 products in 12 categories, including chargers, USB and HDMI cables, power strips, and plug adapters.
+- Six stores: Panda, Carrefour, Tamimi, Amazon Saudi Arabia, Jarir, and eXtra. The last two are shown for electronics.
+- Arabic and English search from the homepage and product list.
+- Category, store, and budget filters; budget checks use verified available offers.
+- Source links and check times next to prices.
+- A previous price is shown only if the current source explicitly supplies it.
+- Favorites and a shopping list saved in the current browser.
+- Product and shopping-list sharing, and a print view.
+- Privacy, terms, price notices, and error reporting on `legal.html`.
 
-## Run
+## Automatic updates
 
-Use a local HTTP server from this folder:
+`.github/workflows/update-prices.yml` checks the approved pages and publishes a new GitHub Pages artifact on pushes, manual runs, and a schedule about every 15 minutes. GitHub can delay scheduled runs and may disable a schedule after 60 days without repository activity; re-enable it in Actions if needed. This is polling, not a notification from each retailer when it changes a price.
+
+The workflow tests the code, runs `scripts/update-prices.mjs`, builds `_site/`, and publishes it. It does not make price-history commits. Its token can read the repository and deploy Pages; it cannot edit repository contents. No store credentials are included in the public website.
+
+The browser reloads the local price feed every five minutes and on return to the tab. An expiry timer removes old prices even if a deployment is delayed. A failed update may leave no current price, which is safer than showing an old number as current.
+
+## Add an approved source
+
+Add a record to `data/product-sources.json` only after checking the retailer's collection rules and the exact item. Include the Saudi product URL, retailer SKU, and an exact name, model, or GTIN. Variants such as storage, colour, cable length, and pack count must match. Do not bind a similar product or mixed model revisions.
+
+Only eXtra public Saudi product pages are enabled in the collector. Other stores need an authorized feed or API before adding a provider. Put future credentials in a server-side secret store, never in JavaScript or a tracked file. Respect rate limits, access rules, and robots.txt; do not bypass blocks.
+
+## Run locally
+
+No packages are needed. Use Node.js 22 or newer for checks and collection.
 
 ```sh
+node --test tests/*.test.mjs
+node scripts/update-prices.mjs
 python -m http.server 8080
 ```
 
-Then open `http://localhost:8080`.
+Open `http://localhost:8080`. Collection uses the network; unit tests do not.
 
 ```sh
-npm test
+node scripts/build-public.mjs
 ```
 
-No packages or build step are needed. All website files are in the main folder. The pricing rules are in `pricing.js` and the sample catalogue is in `catalog.js`.
+The build copies only public HTML, styles, modules, images, and price data to `_site/`. It excludes Git metadata, workflow source, tests, and collector scripts.
 
-The Arabic font is IBM Plex Sans Arabic, from Google Fonts, licensed under the SIL Open Font License. Its license is included in `assets/fonts/OFL.txt`.
+## Code
 
-## Product photos
+- `index.html`, `styles.css`, `app.js`: page, search, product views, and shopping list.
+- `catalog.js`: store definitions and the main product list.
+- `extra-products.js`, `more-products.js`, `food-products.js`, `home-products.js`, `electronics-products.js`: product names, units, and photo sources. All starting prices are unknown.
+- `photo-credits.js`: combined Carrefour photo sources.
+- `store-links.js`, `amazon-links.js`: navigation links. A homepage or search link is not a matched offer.
+- `price-feed.js`: validates and applies the published price snapshot in the browser.
+- `pricing.js`: current-price checks, filtering, rankings, and totals.
+- `scripts/update-prices.mjs`: exact source matching and bounded public-page collection.
+- `data/product-sources.json`, `data/prices.json`: approved source records and the last collected snapshot.
+- `legal.html`, `legal.css`, `legal.js`: policies and reporting.
 
-Product photos come from Carrefour Saudi Arabia product pages. The image files are saved in `assets/products/` so photos load from this site. They illustrate product types. The brand, model, or package shown is not verified across the other stores. Source product pages and original image URLs are listed in `photo-credits.js`, the product files, and the website's photo sources panel. Image rights belong to their owners. Photos are not sources for the demo prices.
+Product photos are original files from Carrefour Saudi Arabia, saved under `assets/products/`. Rights belong to their owners. Photos illustrate items and are not price feeds. The Arabic font is IBM Plex Sans Arabic; its SIL Open Font License is included under `assets/fonts/`.
 
-## Where the code is
+Source: https://github.com/CodeByAbdulaziz/qarenha
 
-- `index.html`: page layout and Arabic text.
-- `styles.css`: responsive layout and colors.
-- `app.js`: search, favorites, dialogs, and shopping list.
-- `pricing.js`: price comparison and delivery calculations.
-- `catalog.js`: products, store names, and sample offers.
-- `extra-products.js`: added categories, products, and photo sources.
-- `more-products.js`: more food, drink, and household products with Carrefour photo sources.
-- `food-products.js`: more fruit and vegetables with Carrefour photo sources.
-- `home-products.js`: more household, care, baby, and electronic products with Carrefour photo sources.
-- `photo-credits.js`: Carrefour photo sources and original image URLs.
-- `store-links.js`: product pages and store search links.
-- `amazon-links.js`: checked Amazon product links and package-aware search terms.
-- `tests/pricing.test.mjs`: tests for the comparison rules.
-- `legal.html`, `legal.css`, and `legal.js`: privacy, terms, price warnings, responsibility limits, and error reporting.
+Website: https://codebyabdulaziz.github.io/qarenha/
 
-## Policies and contact
-
-The policy page describes the current demo only. There are no accounts, payments, live retailer feeds, ads, or affiliate links. Favorites and shopping lists stay in browser storage. Shared URLs include product IDs and quantities. GitHub Pages handles hosting logs under its own privacy policy.
-
-Visitors can report technical errors or request clarification at `Abdulazizdk01@gmail.com`. Email links open the visitor's email app; the website does not send messages or upload forms. Public GitHub issues are an optional technical reporting channel and should not contain personal information.
-
-The price notice explains changes by date, location, store, package, promotions, taxes, and delivery. The terms limit responsibility only to the extent allowed by applicable law. Policy text does not create absolute legal immunity or replace advice for a commercial launch. Review the policies again before adding tracking, accounts, payments, live prices, or affiliate services.
-
-## Store links
-
-Every product has a link for each store. A saved product link opens the retailer's product page. Other links search for the product inside the store. Amazon search queries include the product type and package; results may include different sizes, multipacks, brands, or sellers. Visitors must check the exact item and checkout costs. The button explains the destination. Links open in a new tab.
-
-These links are for browsing, not sources for the sample prices. Brands, sizes, stock, and prices can differ. Check the retailer before buying.
-
-## Edit the website
-
-The code is at https://github.com/CodeByAbdulaziz/qarenha.
-The live website is at https://codebyabdulaziz.github.io/qarenha/.
-
-- Change page text and layout in `index.html`.
-- Change colors, spacing, and mobile layout in `styles.css`.
-- Change products, units, and demo prices in `catalog.js`, `extra-products.js`, `more-products.js`, `food-products.js`, and `home-products.js`.
-- Change store links in `store-links.js`.
-- Change website behavior in `app.js`.
-
-You can edit a file on GitHub with the pencil button, then commit the change to `main`.
-GitHub Pages publishes the files from the main folder on that branch. No build command is needed.
-
-To edit on your computer, open this folder in your code editor, run a local server, and open the local URL:
-
-```sh
-python -m http.server 8080
-```
-
-After editing, commit and push your changes to `main` to update the live website.
-
-Scripts, styles, and module imports use a version in their URLs, such as `?v=20261021`. Increase this version across the changed files and their imports when publishing a new release. This lets returning visitors load the new files instead of an older cached copy.
+Public contact: Abdulazizdk01@gmail.com
 
 ## Search engines
 
-`sitemap.xml` lists the main website and `legal.html` using their public canonical URLs. Product query links and page sections use the same main page, so they are not separate sitemap entries. Keep each `lastmod` date tied to a real page change.
+`sitemap.xml` lists the two canonical pages. Product query links and sections are not separate pages. Keep last-modified dates tied to real edits and keep the Google verification meta tag.
 
-The domain's `robots.txt` must be served at `https://codebyabdulaziz.github.io/robots.txt`. It is maintained in the separate `CodeByAbdulaziz/codebyabdulaziz.github.io` portfolio repository and points to this project's sitemap. A `robots.txt` inside `/qarenha/` would not apply to the domain.
-
-Google Search Console ownership verification, sitemap submission, and requests to index pages are separate manual steps. Check Search Console to confirm their current status. Publishing these files does not confirm ownership verification or indexing.
+The origin's `robots.txt` is maintained in the separate portfolio repository at https://codebyabdulaziz.github.io/robots.txt. Publishing these files does not guarantee Google indexing or search ranking.

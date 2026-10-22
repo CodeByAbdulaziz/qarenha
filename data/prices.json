@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-22T15:22:16.955Z",
+  "maxAgeMinutes": 30,
+  "offers": [
+    {
+      "productId": "phone",
+      "storeId": "extra",
+      "price": 619,
+      "available": true,
+      "currency": "SAR",
+      "sourceUrl": "https://www.extra.com/en-sa/mobiles-tablets/mobiles/smartphone/samsung-galaxy-a16-4g-128gb-4gb-ram-black/p/100389560",
+      "sourceType": "retailer-page",
+      "checkedAt": "2026-10-22T15:22:16.142Z",
+      "verifiedAt": "2026-10-22T15:22:16.142Z",
+      "validUntil": "2026-10-22T15:52:16.142Z",
+      "status": "verified",
+      "reason": null,
+      "regularPrice": null,
+      "availabilityEvidence": "page-and-structured-stock-agree",
+      "region": null,
+      "shippingRegions": [
+        "Al Khobar"
+      ],
+      "seller": "Extra Stores",
+      "identity": {
+        "sku": "100389560",
+        "name": "Samsung Galaxy A16, 4G, 128GB, 4GB RAM, Black",
+        "model": "SM-A165FZKDMEA",
+        "gtin": null
+      }
+    },
+    {
+      "productId": "wireless-mouse",
+      "storeId": "extra",
+      "price": 35,
+      "available": false,
+      "currency": "SAR",
+      "sourceUrl": "https://www.extra.com/en-sa/computer/computers-accessories/mouse/logitech-m170-wireless-mouse-grey/p/00187809",
+      "sourceType": "retailer-page",
+      "checkedAt": "2026-10-22T15:22:16.448Z",
+      "verifiedAt": "2026-10-22T15:22:16.448Z",
+      "validUntil": "2026-10-22T15:52:16.448Z",
+      "status": "verified",
+      "reason": null,
+      "regularPrice": null,
+      "availabilityEvidence": "matching-page-out-of-stock",
+      "region": null,
+      "shippingRegions": [
+        "Al Khobar"
+      ],
+      "seller": "Extra Stores",
+      "identity": {
+        "sku": "00187809",
+        "name": "LOGITECH M170 Wireless Mouse Grey",
+        "model": "910-004642",
+        "gtin": null
+      }
+    }
+  ]
+}

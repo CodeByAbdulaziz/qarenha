@@ -1,7 +1,8 @@
-import { photoCredits } from "./photo-credits.js?v=20261021b";
-import { amazonPages, amazonSearchTerms } from "./amazon-links.js?v=20261021";
+import { photoCredits } from "./photo-credits.js?v=20261022";
+import { amazonPages, amazonSearchTerms } from "./amazon-links.js?v=20261022";
+import { electronicsStorePages } from "./electronics-products.js?v=20261022";
 
-// These links are for browsing stores. They are not sources for the demo prices.
+// A navigation link does not prove a price or a matching current offer.
 export const productPages = {
   apple: {
     panda: "https://panda.sa/ar/p/red-apple-26806",
@@ -51,6 +52,14 @@ export const productPages = {
     carrefour:
       "https://www.carrefourksa.com/mafsau/en/root-maf-category//fruits-vegetables/vegetables/capsicum-chilli/capsicum-mixed-local-tray/p/522165",
   },
+  phone: {
+    extra:
+      "https://www.extra.com/en-sa/mobiles-tablets/mobiles/smartphone/samsung-galaxy-a16-4g-128gb-4gb-ram-black/p/100389560",
+  },
+  "wireless-mouse": {
+    extra:
+      "https://www.extra.com/en-sa/computer/computers-accessories/mouse/logitech-m170-wireless-mouse-grey/p/00187809",
+  },
 };
 
 const storeDomains = {
@@ -58,6 +67,8 @@ const storeDomains = {
   panda: "panda.sa",
   carrefour: "carrefourksa.com",
   tamimi: "shop.tamimimarkets.com",
+  jarir: "www.jarir.com",
+  extra: "www.extra.com",
 };
 
 const searchTerms = {
@@ -80,6 +91,7 @@ export function storeLink(product, storeId) {
   if (!domain) return null;
 
   const directUrl =
+    electronicsStorePages[product.id]?.[storeId] ||
     productPages[product.id]?.[storeId] ||
     (storeId === "amazon" ? amazonPages[product.id] : null) ||
     (storeId === "carrefour"
@@ -87,6 +99,17 @@ export function storeLink(product, storeId) {
       : null);
   if (directUrl) {
     return { href: directUrl, kind: "product", label: "صفحة المنتج" };
+  }
+
+  if (storeId === "jarir" || storeId === "extra") {
+    return {
+      href:
+        storeId === "jarir"
+          ? "https://www.jarir.com/sa-en/"
+          : "https://www.extra.com/en-sa/",
+      kind: "store",
+      label: "تصفح المتجر",
+    };
   }
 
   if (storeId === "amazon") {
