@@ -1,4 +1,4 @@
-import { hasCurrentPrice } from "./pricing.js?v=20261022";
+import { hasCurrentPrice } from "./pricing.js?v=20261030";
 
 const providerDomains = { extra: "www.extra.com" };
 const normalize = (value) =>

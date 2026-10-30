@@ -16,7 +16,7 @@ Prices may change between checks or vary by city, seller, membership, and checko
 
 ## Features
 
-- 112 products in 12 categories, including chargers, USB and HDMI cables, power strips, and plug adapters.
+- 118 products in 12 categories, including chargers, USB and HDMI cables, power strips, and plug adapters.
 - Six stores: Panda, Carrefour, Tamimi, Amazon Saudi Arabia, Jarir, and eXtra. The last two are shown for electronics.
 - Arabic and English search from the homepage and product list.
 - Category, store, and budget filters; budget checks use verified available offers.
@@ -62,8 +62,8 @@ The build copies only public HTML, styles, modules, images, and price data to `_
 
 - `index.html`, `styles.css`, `app.js`: page, search, product views, and shopping list.
 - `catalog.js`: store definitions and the main product list.
-- `extra-products.js`, `more-products.js`, `food-products.js`, `home-products.js`, `electronics-products.js`: product names, units, and photo sources. All starting prices are unknown.
-- `photo-credits.js`: combined Carrefour photo sources.
+- `extra-products.js`, `more-products.js`, `food-products.js`, `home-products.js`, `electronics-products.js`, `extra-chargers.js`, `extra-cables.js`: product names, units, and photo sources. All starting prices are unknown.
+- `photo-credits.js`: combined retailer photo sources.
 - `store-links.js`, `amazon-links.js`: navigation links. A homepage or search link is not a matched offer.
 - `price-feed.js`: validates and applies the published price snapshot in the browser.
 - `pricing.js`: current-price checks, filtering, rankings, and totals.
@@ -71,7 +71,7 @@ The build copies only public HTML, styles, modules, images, and price data to `_
 - `data/product-sources.json`, `data/prices.json`: approved source records and the last collected snapshot.
 - `legal.html`, `legal.css`, `legal.js`: policies and reporting.
 
-Product photos are original files from Carrefour Saudi Arabia, saved under `assets/products/`. Rights belong to their owners. Photos illustrate items and are not price feeds. The Arabic font is IBM Plex Sans Arabic; its SIL Open Font License is included under `assets/fonts/`.
+Product photos are original files from Carrefour Saudi Arabia and eXtra, saved under `assets/products/`. Rights belong to their owners. Photos illustrate items and are not price feeds. The Arabic font is IBM Plex Sans Arabic; its SIL Open Font License is included under `assets/fonts/`.
 
 Source: https://github.com/CodeByAbdulaziz/qarenha
 

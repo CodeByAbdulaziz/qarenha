@@ -1,6 +1,6 @@
-import { photoCredits } from "./photo-credits.js?v=20261022";
-import { amazonPages, amazonSearchTerms } from "./amazon-links.js?v=20261022";
-import { electronicsStorePages } from "./electronics-products.js?v=20261022";
+import { photoCredits } from "./photo-credits.js?v=20261030";
+import { amazonPages, amazonSearchTerms } from "./amazon-links.js?v=20261030";
+import { electronicsStorePages } from "./electronics-products.js?v=20261030";
 
 // A navigation link does not prove a price or a matching current offer.
 export const productPages = {
@@ -89,13 +89,17 @@ const searchTerms = {
 export function storeLink(product, storeId) {
   const domain = storeDomains[storeId];
   if (!domain) return null;
+  const photo = photoCredits.find((credit) => credit.id === product.id);
 
   const directUrl =
     electronicsStorePages[product.id]?.[storeId] ||
     productPages[product.id]?.[storeId] ||
     (storeId === "amazon" ? amazonPages[product.id] : null) ||
-    (storeId === "carrefour"
-      ? photoCredits.find((photo) => photo.id === product.id)?.sourcePage
+    (storeId === "carrefour" && photo?.source === "Carrefour Saudi Arabia"
+      ? photo.sourcePage
+      : null) ||
+    (storeId === "extra" && photo?.source === "eXtra Saudi Arabia"
+      ? photo.sourcePage
       : null);
   if (directUrl) {
     return { href: directUrl, kind: "product", label: "صفحة المنتج" };

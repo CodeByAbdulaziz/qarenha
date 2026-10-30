@@ -1,7 +1,7 @@
-import { products, categories, stores } from "./catalog.js?v=20261022";
-import { photoCredits } from "./photo-credits.js?v=20261022";
-import { storeLink } from "./store-links.js?v=20261022";
-import { loadPriceFeed } from "./price-feed.js?v=20261022";
+import { products, categories, stores } from "./catalog.js?v=20261030";
+import { photoCredits } from "./photo-credits.js?v=20261030";
+import { storeLink } from "./store-links.js?v=20261030";
+import { loadPriceFeed } from "./price-feed.js?v=20261030";
 import {
   availableOffers,
   unverifiedOffers,
@@ -10,7 +10,7 @@ import {
   filterProducts,
   basketSummary,
   hasCurrentPrice,
-} from "./pricing.js?v=20261022";
+} from "./pricing.js?v=20261030";
 
 const $ = (selector) => document.querySelector(selector);
 const productById = new Map(products.map((product) => [product.id, product]));
@@ -331,6 +331,10 @@ function openProduct(id, updateUrl = true) {
   }
 }
 
+function photoSourceName(photo) {
+  return photo?.source === "eXtra Saudi Arabia" ? "إكسترا" : "كارفور";
+}
+
 function renderProduct() {
   const product = productById.get(selectedProduct);
   if (!product) return;
@@ -348,7 +352,7 @@ function renderProduct() {
   const favorite = state.favoriteIds.includes(product.id);
   $("#product-detail").innerHTML = `
     <div class="dialog-top"><span>${current.length ? "الأسعار مرتبطة بوقت آخر تحقق" : "السعر غير متاح · افتح المتجر للتحقق"}</span><button class="icon-button close-dialog" aria-label="إغلاق مقارنة المنتج">${icon("close")}</button></div>
-    <div class="detail-header"><img src="${product.image}" width="400" height="300" alt="${escapeHtml(product.name)}"><div><p class="eyebrow">قارن الأسعار بين المتاجر.</p><h2 id="product-dialog-title">${escapeHtml(product.name)}</h2><p>${escapeHtml(product.unit)}${current.length ? ` · أسعار متحققة: ${current.length}` : ""}</p>${photo ? `<p class="photo-source">صورة توضيحية من <a href="${escapeHtml(photo.sourcePage)}" target="_blank" rel="noopener noreferrer">كارفور ↗</a> · <button data-info="photos">كل المصادر</button></p>` : ""}</div></div>
+    <div class="detail-header"><img src="${product.image}" width="400" height="300" alt="${escapeHtml(product.name)}"><div><p class="eyebrow">قارن الأسعار بين المتاجر.</p><h2 id="product-dialog-title">${escapeHtml(product.name)}</h2><p>${escapeHtml(product.unit)}${current.length ? ` · أسعار متحققة: ${current.length}` : ""}</p>${photo ? `<p class="photo-source">صورة توضيحية من <a href="${escapeHtml(photo.sourcePage)}" target="_blank" rel="noopener noreferrer">${photoSourceName(photo)} ↗</a> · <button data-info="photos">كل المصادر</button></p>` : ""}</div></div>
     <div class="detail-body"><div class="detail-section-head"><h3>الأسعار بين المتاجر</h3><span>لنفس العبوة · قبل التوصيل</span></div>
       ${offers
         .map((offer) => {
@@ -458,7 +462,7 @@ function renderBasket() {
 }
 
 const infoPages = {
-  photos: `<p class="eyebrow">مصدر واحد للصور</p><h2 id="info-title">صور المنتجات من كارفور</h2><p>جميع صور المنتجات حقيقية ومن صفحات منتجات <a href="https://www.carrefourksa.com/" target="_blank" rel="noopener noreferrer">كارفور السعودية</a>. الصور للتوضيح؛ قد تختلف العلامة التجارية أو العبوة في المتاجر الأخرى. مصدر الصورة لا يؤكد وجود سعر متحقق منه أو مطابقة العبوة في المتاجر الأخرى.</p><p>حقوق الصور لأصحابها. لكل صورة رابط لصفحة المنتج الأصلية أدناه.</p><ol class="photo-credits">${photoCredits.map((credit) => `<li><strong>${escapeHtml(productById.get(credit.id)?.name || credit.id)}</strong><span dir="auto">${escapeHtml(credit.title)}</span><a href="${escapeHtml(credit.sourcePage)}" target="_blank" rel="noopener noreferrer">صفحة المنتج والصورة في كارفور ↗</a></li>`).join("")}</ol>`,
+  photos: `<p class="eyebrow">صور من صفحات المنتجات</p><h2 id="info-title">مصادر صور المنتجات</h2><p>صور المنتجات حقيقية ومن صفحاتها لدى <a href="https://www.carrefourksa.com/" target="_blank" rel="noopener noreferrer">كارفور السعودية</a> و<a href="https://www.extra.com/en-sa/" target="_blank" rel="noopener noreferrer">إكسترا</a>. الصور للتوضيح؛ قد تختلف العلامة التجارية أو العبوة في المتاجر الأخرى. مصدر الصورة لا يؤكد وجود سعر متحقق منه أو مطابقة العبوة في المتاجر الأخرى.</p><p>حقوق الصور لأصحابها. لكل صورة رابط لصفحة المنتج الأصلية أدناه.</p><ol class="photo-credits">${photoCredits.map((credit) => `<li><strong>${escapeHtml(productById.get(credit.id)?.name || credit.id)}</strong><span dir="auto">${escapeHtml(credit.title)}</span><a href="${escapeHtml(credit.sourcePage)}" target="_blank" rel="noopener noreferrer">صفحة المنتج والصورة في ${photoSourceName(credit)} ↗</a></li>`).join("")}</ol>`,
   about: `<p class="eyebrow">قرار الشراء يبدأ بمعلومة</p><h2 id="info-title">عن قارنها</h2><p>قارنها موقع عربي للبحث عن المنتجات ومقارنة الأسعار المتحققة من مصادر المتاجر. تجمع الغذائيات والخضروات والفواكه والإلكترونيات والعناية الشخصية واحتياجات الطفل والمنزل في واجهة واحدة.</p><p>يمكنك ترتيب قائمة مشتريات وتغيير الكميات. تحسب المقارنة عند توفر أسعار متحققة لنفس المنتجات والعبوات؛ الأسعار المفقودة لا تتحول إلى صفر.</p><p>الموقع لا يستقبل مدفوعات أو طلبات، ولا توجد عمولات أو روابط تابعة في هذه النسخة.</p><p><a href="./legal.html#terms">شروط الاستخدام والسياسات</a></p>`,
   data: `<p class="eyebrow">السعر مع مصدره ووقت التحقق</p><h2 id="info-title">عن الأسعار والمتاجر</h2><p><strong>لا نعرض أسعارًا افتراضية. السعر غير المتحقق منه أو الذي انتهت صلاحيته يظهر غير متاح، ولا يدخل في المقارنة.</strong></p><ul><li>السعر المعروض يخص المنتج والعبوة المحددين في المصدر، ومعه وقت آخر تحقق بتوقيت السعودية.</li><li>يمكن فتح مصدر السعر مباشرة من المقارنة. رابط البحث في المتجر لا يعني وجود سعر متحقق منه.</li><li>فرق السعر لا يشمل التوصيل، ولا يحسب الإجمالي مع التوصيل إذا كانت رسومه غير متاحة.</li></ul><p>قد تتغير الأسعار والعروض بين عمليتي تحقق، وقد تختلف حسب المدينة والبائع والعضوية والكوبونات. بعض العروض مشروطة ولا تنطبق على الجميع. صفحة المتجر وإجمالي سلته هما المرجع قبل الشراء.</p><p>المتابعة الآلية الحالية تشمل منتجات محددة في إكسترا. باقي المتاجر روابط للتحقق المباشر إلى أن يتوفر مصدر مصرح به. لا يعني وجود رابط للمتجر أن التحديث التلقائي متاح لديه. نعرض السعر فقط عندما يصل من مصدر صالح يمكن التحقق منه؛ وإلا افتح المتجر للتحقق.</p><p><a href="./legal.html#prices">تنبيه الأسعار وحدود المقارنة</a> · <a href="./legal.html#corrections">الإبلاغ عن معلومة خاطئة</a></p>`,
 };

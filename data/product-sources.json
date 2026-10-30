@@ -23,6 +23,72 @@
         "name": "LOGITECH M170 Wireless Mouse Grey"
       },
       "matchEvidence": "Logitech M170 wireless mouse, grey. Exact Saudi eXtra SKU and manufacturer model published in Product JSON-LD; variant checked in live UI. Page says out of stock despite JSON-LD InStock, so the collector must not rank it as available."
+    },
+    {
+      "productId": "extra-anker-45w-white",
+      "storeId": "extra",
+      "url": "https://www.extra.com/en-sa/mobiles-tablets/accessories/chargers/anker-type-c-charger-45-watts-white/p/100347086",
+      "expected": {
+        "sku": "100347086",
+        "name": "Anker, Type-C Charger, 45 Watts, White",
+        "model": "A2643K21"
+      },
+      "matchEvidence": "Canonical product created from this exact eXtra Saudi product SKU, manufacturer model, colour, wattage and original product photo; not matched to a different retailer variant."
+    },
+    {
+      "productId": "extra-cellularline-65w",
+      "storeId": "extra",
+      "url": "https://www.extra.com/en-sa/mobiles-tablets/accessories/chargers/cellularline-charger-3-ports-65w-black/p/100392088",
+      "expected": {
+        "sku": "100392088",
+        "name": "CELLULARLINE Charger 3 Ports, 65W, Black",
+        "model": "ACHUSBGAN3PD65WUKK"
+      },
+      "matchEvidence": "Canonical product created from this exact eXtra Saudi product SKU, manufacturer model, colour, wattage and original product photo; not matched to a different retailer variant."
+    },
+    {
+      "productId": "extra-ugreen-65w",
+      "storeId": "extra",
+      "url": "https://www.extra.com/en-sa/mobiles-tablets/accessories/chargers/ugreen-nexode-65w-3-port-fast-charger-pink-blue/p/100392078",
+      "expected": {
+        "sku": "100392078",
+        "name": "UGREEN Nexode, 65W 3-Port Fast Charger, Pink Blue",
+        "model": "35857"
+      },
+      "matchEvidence": "Canonical product created from this exact eXtra Saudi product SKU, manufacturer model, colour, wattage and original product photo; not matched to a different retailer variant."
+    },
+    {
+      "productId": "extra-homebest-extension",
+      "storeId": "extra",
+      "url": "https://www.extra.com/en-sa/accessories/electrical-essentials/extensions/home-best-power-extension-cord-3-sockets-3m-cable-white/p/100306754",
+      "expected": {
+        "sku": "100306754",
+        "model": "SU 243-3M WHITE",
+        "name": "Home Best, Power Extension Cord, 3 Sockets, 3M Cable, White"
+      },
+      "matchEvidence": "Canonical product taken from this exact Saudi eXtra listing, including retailer SKU, manufacturer code, cable length, colour and pack. Original photo is from the same product record."
+    },
+    {
+      "productId": "extra-manhattan-hdmi",
+      "storeId": "extra",
+      "url": "https://www.extra.com/en-sa/computer/computers-accessories/cables-connectors/manhattan-394697-ultra-high-speed-hdmi-cable-male-to-male-ethernet-8k-2m-black/p/100398467",
+      "expected": {
+        "sku": "100398467",
+        "model": "CV-48-8",
+        "name": "Manhattan 394697 Ultra High Speed HDMI Cable, Male to Male, Ethernet, 8K, 2m, Black"
+      },
+      "matchEvidence": "Canonical product taken from this exact Saudi eXtra listing, including retailer SKU, manufacturer code, cable length, colour and pack. Original photo is from the same product record."
+    },
+    {
+      "productId": "extra-anker-usba-usbc",
+      "storeId": "extra",
+      "url": "https://www.extra.com/en-sa/mobiles-tablets/accessories/cables-and-connectors/anker-322-usb-a-to-usb-c-cable-1-8-mtrs-black/p/100337991",
+      "expected": {
+        "sku": "100337991",
+        "model": "A81H6H11",
+        "name": "Anker 322 USB-A to USB-C Cable, 1.8 Mtrs, Black"
+      },
+      "matchEvidence": "Canonical product taken from this exact Saudi eXtra listing, including retailer SKU, manufacturer code, cable length, colour and pack. Original photo is from the same product record."
     }
   ]
 }

@@ -1,9 +1,11 @@
 // Prices and stock stay unknown until a matching current source is verified.
-import { extraCategories, extraProducts } from "./extra-products.js?v=20261022";
-import { moreProducts } from "./more-products.js?v=20261022";
-import { foodProducts } from "./food-products.js?v=20261022";
-import { homeProducts } from "./home-products.js?v=20261022";
-import { electronicsProducts } from "./electronics-products.js?v=20261022";
+import { extraCategories, extraProducts } from "./extra-products.js?v=20261030";
+import { moreProducts } from "./more-products.js?v=20261030";
+import { foodProducts } from "./food-products.js?v=20261030";
+import { homeProducts } from "./home-products.js?v=20261030";
+import { electronicsProducts } from "./electronics-products.js?v=20261030";
+import { extraChargers } from "./extra-chargers.js?v=20261030";
+import { extraCables } from "./extra-cables.js?v=20261030";
 
 export const DATA_MODE = "verified-only";
 
@@ -1000,6 +1002,8 @@ export const products = [
   ...foodProducts,
   ...homeProducts,
   ...electronicsProducts,
+  ...extraChargers,
+  ...extraCables,
 ];
 
 for (const product of products) {

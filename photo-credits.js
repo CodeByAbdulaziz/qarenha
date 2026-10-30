@@ -1,9 +1,11 @@
-// Real product photos from Carrefour Saudi Arabia. Image rights belong to their owners.
-import { extraPhotoCredits } from "./extra-products.js?v=20261022";
-import { morePhotoCredits } from "./more-products.js?v=20261022";
-import { foodPhotoCredits } from "./food-products.js?v=20261022";
-import { homePhotoCredits } from "./home-products.js?v=20261022";
-import { electronicsPhotoCredits } from "./electronics-products.js?v=20261022";
+// Original product photos from the linked retailer pages. Image rights belong to their owners.
+import { extraPhotoCredits } from "./extra-products.js?v=20261030";
+import { morePhotoCredits } from "./more-products.js?v=20261030";
+import { foodPhotoCredits } from "./food-products.js?v=20261030";
+import { homePhotoCredits } from "./home-products.js?v=20261030";
+import { electronicsPhotoCredits } from "./electronics-products.js?v=20261030";
+import { extraChargerPhotos } from "./extra-chargers.js?v=20261030";
+import { extraCablePhotos } from "./extra-cables.js?v=20261030";
 
 export const photoCredits = [
   {
@@ -288,4 +290,6 @@ export const photoCredits = [
   ...foodPhotoCredits,
   ...homePhotoCredits,
   ...electronicsPhotoCredits,
+  ...extraChargerPhotos,
+  ...extraCablePhotos,
 ];
